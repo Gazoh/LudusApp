@@ -14,9 +14,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
       <StyledMobileMenuWrapper>
         <StyledBackdrop onClick={onDismiss} />
         <StyledMobileMenu>
-          <StyledLink exact activeClassName="active" to="/" onClick={onDismiss}>
-            Home
-          </StyledLink>
           <StyledLink
             exact
             activeClassName="active"
@@ -25,28 +22,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
           >
             Terra-Farms
           </StyledLink>
-          {false && (
-            <StyledLink
-              exact
-              activeClassName="active"
-              to="/staking"
-              onClick={onDismiss}
-            >
-              Staking
-            </StyledLink>
-          )}
-          <StyledAbsoluteLink
-            href="https://strudel-finance.medium.com/"
-            target="_blank"
-          >
-            Help
-          </StyledAbsoluteLink>
-          <StyledAbsoluteLink
-            href="https://strudel-finance.medium.com/"
-            target="_blank"
-          >
-            About
-          </StyledAbsoluteLink>
         </StyledMobileMenu>
       </StyledMobileMenuWrapper>
     )

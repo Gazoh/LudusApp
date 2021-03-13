@@ -24,3 +24,218 @@ code {
 a {
   color: rgba(229,147,16,1);
 }
+
+.b-btn {
+  height: 48px;
+  border: 1px solid #ffffff;
+  background-color: transparent;
+  border-radius: 24px;
+  color: #ffffff;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 116px;
+  position: relative;
+}
+
+.b-btn:focus,
+.b-btn.dropdown button:focus {
+  outline: none;
+}
+
+.dropdown-menu.show {
+  display: flex;
+  flex-direction: column;
+  background-color: #0E7DFF;
+  width: 100%;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  inset: 12px auto auto 0px;
+}
+
+.Toastify__progress-bar--default {
+  background: #4cd964;
+}
+
+.dropdown-menu.show a {
+  height: 48px;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.b-btn.dropdown {
+  padding: 0;
+}
+.b-btn.dropdown button {
+  height: 48px;
+  border: transparent;
+  background-color: transparent;
+  border-radius: 24px;
+  color: #ffffff;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 116px
+}
+
+.b-btn.main {
+  border: 1px solid #0E7DFF;
+  color: #0E7DFF;
+}
+
+.button {
+  height: 48px;
+  border: none;
+  background-color: #0E7DFF;
+  box-shadow: 0px 0px 30px #E5931058;
+  border-radius: 24px;
+  color: #ffffff;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 116px;
+  box-shadow: none;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.nav-item {
+  color: #ffffff;
+  margin-right: 48px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.modal-actions-btm,
+.modal-actions-btm div div button {
+  width: 100%;
+}
+
+.card-wrap {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 10px 18px #00000014;
+  border-radius: 13px;
+  height: 622px;
+  width: 517px;
+  padding: 40px;
+  position: relative;
+}
+
+.card-title {
+  text-align: left;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0px;
+  color: #25252C;
+  opacity: 1;
+  margin-bottom: 40px;
+}
+
+.farms-content-wrap {
+  display: flex;
+}
+
+.card-content-row {
+  height: 92px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.card-content-row img {
+  height: 71px;
+}
+
+.card-content-row-title {
+  text-align: left;
+  font-size: 16px;
+  letter-spacing: 0px;
+  color: #25252C;
+  opacity: 0.48;
+  margin-left: 24px;
+}
+
+.input-selection {
+  width: 146px;
+  height: 56px;
+  border: 1px solid #D1D1D1;
+  border-radius: 43px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-left: auto;
+}
+
+.input-selection-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: absolute;
+}
+
+.card-wrap-column {
+  display: flex;
+  flex-direction: column;
+  margin-left: 48px;
+}
+
+.card-wrap-column .card-wrap {
+  height: 251px;
+  width: 686px;
+}
+
+.card-wrap-column .card-wrap:first-child {
+  margin-bottom: 40px
+}
+
+.card-content-text {
+  text-align: left;
+  font-size:  20px;
+  letter-spacing: 0px;
+  color: #25252C;
+  opacity: 0.48;
+  padding-bottom: 8px;
+}
+
+.card-content-number {
+  text-align: left;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0px;
+  color: #0E7DFF;
+  opacity: 1;
+}
+
+.input-selection-icon.left {
+  left: 0;
+}
+
+.input-selection-icon.right {
+  right: 0;
+}
+
+.card-content-btm {
+  position: absolute;
+  bottom: 40px;
+}
+
+.card-content-btm button {  
+  margin: 0 8px;
+}
+
+.card-content-btm button:first-child {  
+  margin: 0;
+}

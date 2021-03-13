@@ -15,6 +15,7 @@ const StyledMain = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-height: calc(100vh - ${(props) => props.theme.topBarSize * 2}px);
 `
 

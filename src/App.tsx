@@ -53,16 +53,8 @@ const App: React.FC = () => {
       <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
       <Switch>
         <Route path="/" exact>
-          <Home />
+        <Farms />
         </Route>
-        <Route path="/farms">
-          <Farms />
-        </Route>
-        {false && (
-          <Route path="/staking">
-            <Stake />
-          </Route>
-        )}
       </Switch>
     </>
   )

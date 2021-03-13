@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import logoHeaderDark from '../../assets/img/logo-header-dark.svg'
+import logoHeaderDark from '../../assets/img/LudusLogoWhite.svg'
 
 const Logo: React.FC = () => {
   return (

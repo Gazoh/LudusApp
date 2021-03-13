@@ -46,7 +46,7 @@ const StyledLogoWrapper = styled.div`
 const StyledTopBar = styled.div`
   position: sticky;
   top: 0;
-  background: white;
+  background: #0E7DFF;
   z-index: 99;
   border-bottom: 1px solid #E9E9E9;
 `
@@ -62,7 +62,7 @@ const StyledTopBarInner = styled.div`
 const StyledNavWrapper = styled.div`
   display: flex;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-end;
   @media (max-width: 500px) {
     display: none;
   }
@@ -72,9 +72,9 @@ const StyledAccountButtonWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  width: 156px;
+  width: 100%;
   @media (max-width: 500px) {
-    justify-content: center;
+    justify-content: flex-end;
     width: auto;
   }
 `
@@ -90,7 +90,7 @@ const StyledMenuButton = styled.button`
     align-items: center;
     display: flex;
     height: 44px;
-    justify-content: center;
+    justify-content: flex-end;
     width: 44px;
   }
 `

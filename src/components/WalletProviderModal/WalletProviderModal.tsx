@@ -6,6 +6,7 @@ import metamaskLogo from '../../assets/img/metamask-fox.svg'
 import walletConnectLogo from '../../assets/img/wallet-connect.svg'
 
 import Button from '../Button'
+import CustomButton from '../CustomButton/CustomButton'
 import Modal, { ModalProps } from '../Modal'
 import ModalActions from '../ModalActions'
 import ModalContent from '../ModalContent'
@@ -38,7 +39,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
           </StyledWalletCard>
           <StyledWalletCard>
             <WalletCard
-              style={{ boxShadow: 'none'}}
+              style={{ boxShadow: 'none' }}
               icon={<img src={walletConnectLogo} style={{ height: 24 }} />}
               onConnect={() => connect('walletconnect')}
               title="WalletConnect"
@@ -48,7 +49,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
       </ModalContent>
 
       <ModalActions>
-        <Button text="Cancel" variant="secondary" onClick={onDismiss} />
+        <CustomButton className='button' onClick={onDismiss}>Cancel</CustomButton>
       </ModalActions>
     </Modal>
   )

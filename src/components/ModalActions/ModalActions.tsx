@@ -6,16 +6,18 @@ import Spacer from '../Spacer'
 const ModalActions: React.FC = ({ children }) => {
   const l = React.Children.toArray(children).length
   return (
-    <StyledModalActions>
-      {React.Children.map(children, (child, i) => (
-        <>
-          <StyledModalAction>
-            {child}
-          </StyledModalAction>
-          {i < l - 1 && <Spacer />}
-        </>
-      ))}
-    </StyledModalActions>
+    <div className='modal-actions-btm'>
+      <StyledModalActions>
+        {React.Children.map(children, (child, i) => (
+          <>
+            <StyledModalAction>
+              {child}
+            </StyledModalAction>
+            {i < l - 1 && <Spacer />}
+          </>
+        ))}
+      </StyledModalActions>
+    </div>
   )
 }
 

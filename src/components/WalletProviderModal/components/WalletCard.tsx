@@ -8,6 +8,7 @@ import Spacer from '../../Spacer'
 import styled from 'styled-components'
 import getChainId from '../../../utils/cahinId'
 import showError from '../../../utils/showError'
+import CustomButton from '../../CustomButton/CustomButton'
 
 interface WalletCardProps {
   icon: React.ReactNode
@@ -32,13 +33,10 @@ const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, style }
         <CardIcon>{icon}</CardIcon>
         <CardTitle text={title} />
         <Spacer />
-        <Button
-          onClick={async () => {
-            onConnect()
-            setChainId(await getChainId())
-          }}
-          text="Connect"
-        />
+        <CustomButton className='button' onClick={async () => {
+          onConnect()
+          setChainId(await getChainId())
+        }}>Connect</CustomButton>
       </CardContent>
     </Card>
   )

@@ -1,4 +1,5 @@
 import * as fab from "@fortawesome/free-brands-svg-icons";
+import * as fas from "@fortawesome/free-solid-svg-icons";
 
 export const icons = {
     instagram: fab.faInstagram,
@@ -9,5 +10,7 @@ export const icons = {
     twitter: fab.faTwitter,
     medium: fab.faMedium,
     discord: fab.faDiscord,
-    github: fab.faGithub
+    github: fab.faGithub,
+    minus: fas.faMinus,
+    plus: fas.faPlus
 }

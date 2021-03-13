@@ -18,11 +18,12 @@ import Farm from '../Farm'
 import styled from 'styled-components'
 import { withStyles } from '@material-ui/core'
 
-import FarmCards from './components/FarmCards'
 import MuiContainer from '@material-ui/core/Container'
 import { TerraFarm } from '../../components/Lottie'
 import Spacer from '../../components/Spacer'
 import MuiPaper from '@material-ui/core/Paper'
+import CustomButton from '../../components/CustomButton/CustomButton'
+import FarmsContent from './FarmsContent'
 
 const Paper = withStyles({
   rounded: {
@@ -52,47 +53,7 @@ const Farms: React.FC = () => {
   return (
     <Switch>
       <Page>
-        {!!account ? (
-          <>
-            <Route exact path={path}>
-              <PageHeader
-                iconSize={200}
-                subtitle="Earn $TRDL by staking LP Tokens."
-                title="Terra-Farms to Explore"
-              />
-              <Container maxWidth="md" className='farm-container'>
-                <StyledP>
-                  The Terra-Farms strengthen the protocol and the peg of
-                  vBTC to BTC.
-                    </StyledP>
-                <StyledP>
-                    $TRDL is the crypto-economical incentive to stake and earn rewards.
-                  </StyledP>
-              </Container>
-              <Spacer size="sm" />
-              <FarmCards />
-            </Route>
-            <Route path={`${path}/:farmId`}>
-              <Farm />
-            </Route>
-          </>
-        ) : (
-            <div
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                flex: 1,
-                justifyContent: 'center',
-              }}
-            >
-              <Button
-                boxShadowGlow={true}
-                onClick={onPresentWalletProviderModal}
-                text="Unlock Wallet"
-              />
-            </div>
-          )}
-
+        <FarmsContent />
       </Page>
     </Switch>
   )
