@@ -89,6 +89,17 @@ a {
   color: #0E7DFF;
 }
 
+.b-btn.main:disabled,
+.button:disabled, 
+.input-selection.disabled{
+  cursor: default;
+  opacity: 0.32;
+}
+
+.input-selection.disabled .input-selection-icon {
+  cursor: default;
+}
+
 .button {
   height: 48px;
   border: none;
@@ -145,7 +156,7 @@ a {
 }
 
 .card-content-row {
-  height: 92px;
+  height: 112px;
   display: flex;
   flex-direction: row;
   align-items: center;

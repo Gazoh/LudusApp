@@ -5,8 +5,10 @@ import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../../helpers/icon'
 import CustomButton from '../../components/CustomButton/CustomButton'
+import { useWallet } from 'use-wallet'
 
 const FarmsContent: React.FC = () => {
+    const { account } = useWallet()
 
     return (
         <div className='farms-content-wrap'>
@@ -16,7 +18,7 @@ const FarmsContent: React.FC = () => {
                     <div className='card-content-row'>
                         <img src={LudusGenesis001} alt="LudusGenesis001" />
                         <div className='card-content-row-title'>Ludus Genesis 001</div>
-                        <div className='input-selection'>
+                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                             <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
                             <div className='input-selection-number'>20</div>
                             <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
@@ -25,17 +27,27 @@ const FarmsContent: React.FC = () => {
                     <div className='card-content-row'>
                         <img src={LudusGenesis002} alt="LudusGenesis002" />
                         <div className='card-content-row-title'>Ludus Genesis 002</div>
+                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                            <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
+                            <div className='input-selection-number'>20</div>
+                            <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
+                        </div>
                     </div>
                     <div className='card-content-row'>
                         <img src={LudusGenesis003} alt="LudusGenesis003" />
                         <div className='card-content-row-title'>Ludus Genesis 003</div>
+                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                            <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
+                            <div className='input-selection-number'>20</div>
+                            <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
+                        </div>
                     </div>
                 </div>
                 <div className='card-content-btm'>
-                    <CustomButton className='button'>Approve</CustomButton>
-                    <CustomButton className='b-btn main'>Stake</CustomButton>
-                    <CustomButton className='b-btn main'>Claim</CustomButton>
-                    <CustomButton className='b-btn main'>Unstake</CustomButton>
+                    <CustomButton className='button' disabled={!account}>Approve</CustomButton>
+                    <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
+                    <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
+                    <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                 </div>
             </div>
             <div className='card-wrap-column'>
@@ -46,10 +58,10 @@ const FarmsContent: React.FC = () => {
                         <div className='card-content-number'>156454</div>
                     </div>
                     <div className='card-content-btm'>
-                        <CustomButton className='button'>Approve</CustomButton>
-                        <CustomButton className='b-btn main'>Stake</CustomButton>
-                        <CustomButton className='b-btn main'>Claim</CustomButton>
-                        <CustomButton className='b-btn main'>Unstake</CustomButton>
+                        <CustomButton className='button' disabled={!account}>Approve</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                     </div>
                 </div>
                 <div className='card-wrap'>
@@ -59,10 +71,10 @@ const FarmsContent: React.FC = () => {
                         <div className='card-content-number'>156454</div>
                     </div>
                     <div className='card-content-btm'>
-                        <CustomButton className='button'>Approve</CustomButton>
-                        <CustomButton className='b-btn main'>Stake</CustomButton>
-                        <CustomButton className='b-btn main'>Claim</CustomButton>
-                        <CustomButton className='b-btn main'>Unstake</CustomButton>
+                        <CustomButton className='button' disabled={!account}>Approve</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                     </div>
                 </div>
             </div>
