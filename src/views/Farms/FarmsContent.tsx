@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
 import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
@@ -9,6 +9,9 @@ import { useWallet } from 'use-wallet'
 
 const FarmsContent: React.FC = () => {
     const { account } = useWallet()
+    const [ludusGenesis001, setLudusGenesis001] = useState(0)
+    const [ludusGenesis002, setLudusGenesis002] = useState(0)
+    const [ludusGenesis003, setLudusGenesis003] = useState(0)
 
     return (
         <div className='farms-content-wrap'>
@@ -19,27 +22,27 @@ const FarmsContent: React.FC = () => {
                         <img src={LudusGenesis001} alt="LudusGenesis001" />
                         <div className='card-content-row-title'>Ludus Genesis 001</div>
                         <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
-                            <div className='input-selection-number'>20</div>
-                            <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
+                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                            <div className='input-selection-number'>{ludusGenesis001}</div>
+                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                         </div>
                     </div>
                     <div className='card-content-row'>
                         <img src={LudusGenesis002} alt="LudusGenesis002" />
                         <div className='card-content-row-title'>Ludus Genesis 002</div>
                         <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
-                            <div className='input-selection-number'>20</div>
-                            <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
+                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                            <div className='input-selection-number'>{ludusGenesis002}</div>
+                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                         </div>
                     </div>
                     <div className='card-content-row'>
                         <img src={LudusGenesis003} alt="LudusGenesis003" />
                         <div className='card-content-row-title'>Ludus Genesis 003</div>
                         <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <div className='input-selection-icon left'><FontAwesomeIcon icon={icons.minus} /></div>
-                            <div className='input-selection-number'>20</div>
-                            <div className='input-selection-icon right'><FontAwesomeIcon icon={icons.plus} /></div>
+                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                            <div className='input-selection-number'>{ludusGenesis003}</div>
+                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                         </div>
                     </div>
                 </div>

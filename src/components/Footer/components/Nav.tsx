@@ -7,7 +7,7 @@ import styled from 'styled-components'
 const Nav: React.FC = () => {
   return (
     <StyledNav>
-      <StyledLink target="_blank" href="https://www.instagram.com/strudel.finance/">
+      {/* <StyledLink target="_blank" href="https://www.instagram.com/strudel.finance/">
         <FontAwesomeIcon icon={icons.instagram} />
       </StyledLink>
       <StyledLink target="_blank" href="https://www.linkedin.com/company/strudel-finance/">
@@ -33,7 +33,7 @@ const Nav: React.FC = () => {
       </StyledLink>
       <StyledLink target="_blank" href="https://github.com/strudel-finance/">
         <FontAwesomeIcon icon={icons.github} />
-      </StyledLink>
+      </StyledLink> */}
 
     </StyledNav>
   )

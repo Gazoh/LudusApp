@@ -100,6 +100,11 @@ a {
   cursor: default;
 }
 
+.nbdr-btn {
+  background: transparent;
+  border: none;
+}
+
 .button {
   height: 48px;
   border: none;
@@ -115,7 +120,8 @@ a {
   box-shadow: none;
 }
 
-.button:focus {
+.button:focus,
+.nbdr-btn:focus {
   outline: none;
 }
 
@@ -163,7 +169,7 @@ a {
 }
 
 .card-content-row img {
-  height: 71px;
+  height: 92px;
 }
 
 .card-content-row-title {
