@@ -13,6 +13,15 @@ export const getContract = (provider: provider, address: string) => {
   return contract
 }
 
+export const getContractOf = (ABI: any, provider: provider, address: string) => {
+  const web3 = new Web3(provider)
+  const contract = new web3.eth.Contract(
+    (ABI as unknown) as AbiItem,
+    address,
+  )
+  return contract
+}
+
 export const getAllowance = async (
   lpContract: Contract,
   masterChefContract: Contract,

@@ -51,7 +51,7 @@ a {
   width: 100%;
   border-bottom-left-radius: 24px;
   border-bottom-right-radius: 24px;
-  inset: 12px auto auto 0px;
+  inset: 12px auto auto 0px !important;
 }
 
 .Toastify__progress-bar--default {
@@ -254,5 +254,5 @@ a {
 }
 
 .card-content-btm button:first-child {  
-  margin: 0;
+  margin-left: 0;
 }
