@@ -21,15 +21,15 @@ const FarmsContent: React.FC = () => {
     const { account, ethereum } = useWallet()
 
     const LudusStakingContractAddress = '0xDb2f554A333D189ed59eA36020a83F7d6De14328'
-    const LudusContracttAddress = '0xFe44FF05D7C06E792D6eF4762B2441e82Bc602a5'
-    const LPStakingContracttAddress = '0x94A44de106112A761B69dFBEB1ac6cfdD1B80304'
-    const NFTStakingContracttAddress = '0x47330D2fe6F75899597C14d615003Ef561B01B14'
+    const LudusContractAddress = '0xFe44FF05D7C06E792D6eF4762B2441e82Bc602a5'
+    const LPStakingContractAddress = '0x94A44de106112A761B69dFBEB1ac6cfdD1B80304'
+    const NFTStakingContractAddress = '0x47330D2fe6F75899597C14d615003Ef561B01B14'
     const NFTMockContracttAddress = '0x07bf260a44CEADfad215cc8e20c5b0398D25b1FA'
 
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [account])
-    const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContracttAddress) }, [account])
-    const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContracttAddress) }, [account])
-    const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContracttAddress) }, [account])
+    const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [account])
+    const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContractAddress) }, [account])
+    const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [account])
     const NFTMockContract = useMemo(() => { return getContractOf(NFTMockABI, ethereum as provider, NFTMockContracttAddress) }, [account])
 
     const [ludusGenesis001, setLudusGenesis001] = useState(0)
@@ -52,7 +52,10 @@ const FarmsContent: React.FC = () => {
 
     // NFT Staking
 
-    const approveNFTStaking = () => {
+    const approveNFTStaking = async () => {
+        const encodedABI = NFTMockContract.methods.setApprovalForAll(NFTStakingContractAddress, true).encodeABI();
+        const hx = await sendTransaction(ethereum, account, NFTMockContracttAddress, encodedABI);
+        console.log('hx', hx)
         console.log('NFTMockContract', NFTMockContract)
     }
 
@@ -67,7 +70,7 @@ const FarmsContent: React.FC = () => {
     const approveSingleAsset = async () => {
         // TODO approve amount must be a input for user 
         const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
-        const hx = await sendTransaction(ethereum, account, LudusContracttAddress, encodedABI);
+        const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
         console.log('hx', hx)
     }
 
@@ -82,7 +85,7 @@ const FarmsContent: React.FC = () => {
     const approveLPStaking = async () => {
         // TODO approve amount must be a input for user 
         const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
-        const hx = await sendTransaction(ethereum, account, LudusContracttAddress, encodedABI);
+        const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
         console.log('hx', hx)
     }
 
