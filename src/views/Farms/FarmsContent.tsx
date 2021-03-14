@@ -6,6 +6,7 @@ import { provider } from 'web3-core'
 import { getContractOf } from '../../utils/erc20'
 
 import NFTStakingABI from '../../assets/abi/test/NFTStakingABI.json';
+import NFTMockABI from '../../assets/abi/test/NFTMockABI.json';
 import LPStakingABI from '../../assets/abi/test/LPStakingABI.json';
 import LudusABI from '../../assets/abi/test/LudusABI.json';
 import LudusStakingABI from '../../assets/abi/test/LudusStakingABI.json';
@@ -14,29 +15,63 @@ import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
 import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
 import CustomButton from '../../components/CustomButton/CustomButton'
+import { sendTransaction } from '../../utils/utils'
 
 const FarmsContent: React.FC = () => {
     const { account, ethereum } = useWallet()
-    
-    const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, '0xDb2f554A333D189ed59eA36020a83F7d6De14328') }, [account])
-    const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, '0xFe44FF05D7C06E792D6eF4762B2441e82Bc602a5') }, [account])
-    const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, '0x94A44de106112A761B69dFBEB1ac6cfdD1B80304') }, [account])
-    const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, '0x47330D2fe6F75899597C14d615003Ef561B01B14') }, [account])
-    const NFTMockContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, '0x07bf260a44CEADfad215cc8e20c5b0398D25b1FA') }, [account])
+
+    const LudusStakingContractAddress = '0xDb2f554A333D189ed59eA36020a83F7d6De14328'
+    const LudusContracttAddress = '0xFe44FF05D7C06E792D6eF4762B2441e82Bc602a5'
+    const LPStakingContracttAddress = '0x94A44de106112A761B69dFBEB1ac6cfdD1B80304'
+    const NFTStakingContracttAddress = '0x47330D2fe6F75899597C14d615003Ef561B01B14'
+    const NFTMockContracttAddress = '0x07bf260a44CEADfad215cc8e20c5b0398D25b1FA'
+
+    const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [account])
+    const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContracttAddress) }, [account])
+    const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContracttAddress) }, [account])
+    const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContracttAddress) }, [account])
+    const NFTMockContract = useMemo(() => { return getContractOf(NFTMockABI, ethereum as provider, NFTMockContracttAddress) }, [account])
 
     const [ludusGenesis001, setLudusGenesis001] = useState(0)
     const [ludusGenesis002, setLudusGenesis002] = useState(0)
     const [ludusGenesis003, setLudusGenesis003] = useState(0)
-    
+
     const [ludusBalance, setLudusBalance] = useState(0)
+    const [lpBalance, setLpBalance] = useState(0)
 
     useEffect(() => {
-        console.log('LPStakingContract', LPStakingContract)
-        console.log('NFTStakingContract', NFTStakingContract)
-        console.log('LudusContract', LudusContract)
-        console.log('LudusStakingContract', LudusStakingContract)
-        console.log('NFTMockContract', NFTMockContract)
+        // setting Ludus & LP Balance
+        if(account !== null) {
+            const balLudus = LudusContract.methods.balanceOf(account).call();
+            balLudus.then((b: any) => setLudusBalance(b))
+            const balLP = LPStakingContract.methods.balanceOf(account).call();
+            balLP.then((b: any) => setLpBalance(b))
+
+        }
     }, [account])
+
+    const approveNFTStaking = () => {
+        console.log('NFTMockContract', NFTMockContract)
+    }
+
+    const stakeNFT = () => {
+        const stakeMethode = NFTStakingContract.methods.stake('181087', 1).call();
+        stakeMethode.then((staked: any) => console.log('staked', staked))
+        console.log('NFTStakingContract', NFTStakingContract)
+    }
+
+    const approveSingleAsset = async () => {
+        // TODO approve amount must be a input for user 
+        const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
+        const hx = await sendTransaction(ethereum, account, LudusContracttAddress, encodedABI);
+        console.log('hx', hx)
+    }
+
+    const stakeSingleAsset = () => {
+        const stake = LudusStakingContract.methods.stake(10000000000).call();
+        stake.then((s: any) => console.log('s', s))
+        console.log('LudusStakingContract', LudusStakingContract)
+    }
 
     return (
         <div className='farms-content-wrap'>
@@ -72,8 +107,8 @@ const FarmsContent: React.FC = () => {
                     </div>
                 </div>
                 <div className='card-content-btm'>
-                    <CustomButton className='button' disabled={!account}>Approve</CustomButton>
-                    <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
+                    <CustomButton className='button' disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
+                    <CustomButton className='b-btn main' disabled={!account} onClick={stakeNFT}>Stake</CustomButton>
                     <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
                     <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                 </div>
@@ -86,8 +121,8 @@ const FarmsContent: React.FC = () => {
                         <div className='card-content-number'>{ludusBalance}</div>
                     </div>
                     <div className='card-content-btm'>
-                        <CustomButton className='button' disabled={!account}>Approve</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
+                        <CustomButton className='button' disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account} onClick={stakeSingleAsset}>Stake</CustomButton>
                         <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
                         <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                     </div>
@@ -96,7 +131,7 @@ const FarmsContent: React.FC = () => {
                     <div className='card-title'>LP Staking</div>
                     <div className='card-content'>
                         <div className='card-content-text'>Your LP Balans</div>
-                        <div className='card-content-number'>156454</div>
+                        <div className='card-content-number'>{lpBalance}</div>
                     </div>
                     <div className='card-content-btm'>
                         <CustomButton className='button' disabled={!account}>Approve</CustomButton>
