@@ -41,7 +41,7 @@ const FarmsContent: React.FC = () => {
 
     useEffect(() => {
         // setting Ludus & LP Balance
-        if(account !== null) {
+        if (account !== null) {
             const balLudus = LudusContract.methods.balanceOf(account).call();
             balLudus.then((b: any) => setLudusBalance(b))
             const balLP = LPStakingContract.methods.balanceOf(account).call();
@@ -49,6 +49,8 @@ const FarmsContent: React.FC = () => {
 
         }
     }, [account])
+
+    // NFT Staking
 
     const approveNFTStaking = () => {
         console.log('NFTMockContract', NFTMockContract)
@@ -59,6 +61,8 @@ const FarmsContent: React.FC = () => {
         stakeMethode.then((staked: any) => console.log('staked', staked))
         console.log('NFTStakingContract', NFTStakingContract)
     }
+
+    // Single Asset Staking
 
     const approveSingleAsset = async () => {
         // TODO approve amount must be a input for user 
@@ -73,71 +77,89 @@ const FarmsContent: React.FC = () => {
         console.log('LudusStakingContract', LudusStakingContract)
     }
 
+    // LP Staking
+
+    const approveLPStaking = async () => {
+        // TODO approve amount must be a input for user 
+        const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
+        const hx = await sendTransaction(ethereum, account, LudusContracttAddress, encodedABI);
+        console.log('hx', hx)
+    }
+
+    const stakeLP = () => {
+        const stake = LPStakingContract.methods.stake(10000000000).call();
+        stake.then((s: any) => console.log('s', s))
+        console.log('LPStakingContract', LPStakingContract)
+    }
+
+
     return (
         <div className='farms-content-wrap'>
-            <div className='card-wrap'>
-                <div className='card-title'>NFT Staking</div>
-                <div className='card-content'>
-                    <div className='card-content-row'>
-                        <img src={LudusGenesis001} alt="LudusGenesis001" />
-                        <div className='card-content-row-title'>Ludus Genesis 001</div>
-                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                            <div className='input-selection-number'>{ludusGenesis001}</div>
-                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                        </div>
-                    </div>
-                    <div className='card-content-row'>
-                        <img src={LudusGenesis002} alt="LudusGenesis002" />
-                        <div className='card-content-row-title'>Ludus Genesis 002</div>
-                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                            <div className='input-selection-number'>{ludusGenesis002}</div>
-                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                        </div>
-                    </div>
-                    <div className='card-content-row'>
-                        <img src={LudusGenesis003} alt="LudusGenesis003" />
-                        <div className='card-content-row-title'>Ludus Genesis 003</div>
-                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                            <div className='input-selection-number'>{ludusGenesis003}</div>
-                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                        </div>
-                    </div>
-                </div>
-                <div className='card-content-btm'>
-                    <CustomButton className='button' disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
-                    <CustomButton className='b-btn main' disabled={!account} onClick={stakeNFT}>Stake</CustomButton>
-                    <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
-                    <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
-                </div>
-            </div>
-            <div className='card-wrap-column'>
+            <div className='farms-content'>
                 <div className='card-wrap'>
-                    <div className='card-title'>Single asset staking</div>
+                    <div className='card-title'>NFT Staking</div>
                     <div className='card-content'>
-                        <div className='card-content-text'>Your Ludus balans</div>
-                        <div className='card-content-number'>{ludusBalance}</div>
+                        <div className='card-content-row'>
+                            <img src={LudusGenesis001} alt="LudusGenesis001" />
+                            <div className='card-content-row-title'>Ludus Genesis 001</div>
+                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                <div className='input-selection-number'>{ludusGenesis001}</div>
+                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                            </div>
+                        </div>
+                        <div className='card-content-row'>
+                            <img src={LudusGenesis002} alt="LudusGenesis002" />
+                            <div className='card-content-row-title'>Ludus Genesis 002</div>
+                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                <div className='input-selection-number'>{ludusGenesis002}</div>
+                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                            </div>
+                        </div>
+                        <div className='card-content-row'>
+                            <img src={LudusGenesis003} alt="LudusGenesis003" />
+                            <div className='card-content-row-title'>Ludus Genesis 003</div>
+                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                <div className='input-selection-number'>{ludusGenesis003}</div>
+                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                            </div>
+                        </div>
                     </div>
                     <div className='card-content-btm'>
-                        <CustomButton className='button' disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account} onClick={stakeSingleAsset}>Stake</CustomButton>
+                        <CustomButton className='button' disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account} onClick={stakeNFT}>Stake</CustomButton>
                         <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
                         <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
                     </div>
                 </div>
-                <div className='card-wrap'>
-                    <div className='card-title'>LP Staking</div>
-                    <div className='card-content'>
-                        <div className='card-content-text'>Your LP Balans</div>
-                        <div className='card-content-number'>{lpBalance}</div>
+                <div className='card-wrap-column'>
+                    <div className='card-wrap'>
+                        <div className='card-title'>Single asset staking</div>
+                        <div className='card-content'>
+                            <div className='card-content-text'>Your Ludus balans</div>
+                            <div className='card-content-number'>{ludusBalance}</div>
+                        </div>
+                        <div className='card-content-btm'>
+                            <CustomButton className='button' disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={stakeSingleAsset}>Stake</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                        </div>
                     </div>
-                    <div className='card-content-btm'>
-                        <CustomButton className='button' disabled={!account}>Approve</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Stake</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                    <div className='card-wrap'>
+                        <div className='card-title'>LP Staking</div>
+                        <div className='card-content'>
+                            <div className='card-content-text'>Your LP Balans</div>
+                            <div className='card-content-number'>{lpBalance}</div>
+                        </div>
+                        <div className='card-content-btm'>
+                            <CustomButton className='button' disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={stakeLP}>Stake</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                        </div>
                     </div>
                 </div>
             </div>

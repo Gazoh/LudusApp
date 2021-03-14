@@ -141,10 +141,12 @@ a {
   background: #FFFFFF 0% 0% no-repeat padding-box;
   box-shadow: 0px 10px 18px #00000014;
   border-radius: 13px;
-  height: 622px;
-  width: 517px;
   padding: 40px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 517px;
 }
 
 .card-title {
@@ -159,6 +161,16 @@ a {
 
 .farms-content-wrap {
   display: flex;
+  justify-content: center;
+  height: 100%;
+  /* width: 100%; */
+}
+
+.farms-content {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  /* width: 70%; */
 }
 
 .card-content-row {
@@ -207,11 +219,21 @@ a {
   display: flex;
   flex-direction: column;
   margin-left: 48px;
+  height: 100%;
+  width: 100%;
 }
 
 .card-wrap-column .card-wrap {
-  height: 251px;
-  width: 686px;
+  width: 100%;
+  min-width: max-content;
+  max-width: 686px;
+  webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.card-wrap-column .card-wrap .card-content-btm {
+  margin-top: 40px;
 }
 
 .card-wrap-column .card-wrap:first-child {
@@ -245,8 +267,7 @@ a {
 }
 
 .card-content-btm {
-  position: absolute;
-  bottom: 40px;
+  margin-top: auto;
 }
 
 .card-content-btm button {  
@@ -256,3 +277,88 @@ a {
 .card-content-btm button:first-child {  
   margin-left: 0;
 }
+
+.card-content-btm button:last-child {  
+  margin-right: 0;
+}
+
+footer {
+  display: none !important;
+}
+
+.menu-btn-mob {
+  display: none !important;
+}
+
+.menu-btn-mob svg {
+  fill: #ffffff;
+}
+
+@media only screen and (max-width: 1024px) {
+    .farms-content {
+      flex-direction: column;
+    }
+  
+    .card-wrap-column .card-wrap {
+      min-width: auto;
+    }
+
+    .card-wrap {
+      max-width: none;
+      box-sizing: border-box;
+    }
+
+    .card-wrap-column {
+      margin-left: 0;
+      margin-top: 40px;
+    }
+
+    .card-wrap-column .card-wrap {
+      max-width: none;
+    }
+
+    .farms-content-wrap,
+    .farms-content {
+      width: 100%;
+      padding: 24px 48px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+  .card-content-btm {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media only screen and (max-width: 592px) {
+ .card-content-btm .b-btn {
+   min-width: auto;
+ }
+}
+
+@media only screen and (max-width: 426px) {
+  .card-content-btm {
+   display: flex;
+   flex-direction: column;
+  }
+
+  .card-content-btm button {
+    width: 100%;
+    margin: 0;
+    margin-bottom: 12px;
+  }
+
+  .card-content-row-title {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .styled-account-btn {
+    display: none !important;
+  }
+
+  .card-content-btm button:last-child {
+    margin: 0;
+  }
+ }

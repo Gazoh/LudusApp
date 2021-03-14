@@ -1,7 +1,13 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
-
+import { useWallet } from 'use-wallet'
 import { NavLink } from 'react-router-dom'
+import CustomButton from '../CustomButton/CustomButton'
+import useModal from '../../hooks/useModal'
+import WalletProviderModal from '../WalletProviderModal'
+import Dropdown from 'react-bootstrap/esm/Dropdown'
+import copy from 'copy-to-clipboard';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface MobileMenuProps {
   onDismiss: () => void
@@ -9,19 +15,42 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
+  const { account } = useWallet()
+  const [onPresentWalletProviderModal] = useModal(
+    <WalletProviderModal />,
+    'provider',
+  )
+  
+
   if (visible) {
     return (
       <StyledMobileMenuWrapper>
         <StyledBackdrop onClick={onDismiss} />
         <StyledMobileMenu>
-          <StyledLink
-            exact
-            activeClassName="active"
-            to="/farms"
-            onClick={onDismiss}
-          >
-            Terra-Farms
-          </StyledLink>
+          {!account ? (
+            <>
+              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+              <CustomButton className='b-btn' onClick={onPresentWalletProviderModal}>Connect to wallet</CustomButton>
+            </>
+          ) : (
+            <>
+              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+              <Dropdown className='b-btn'>
+                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                  My Wallet
+              </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#/action-1" onClick={() => {
+                    copy(account)
+                    toast("Copied address")
+                  }}>Copy address</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              {/* <CustomButton className='b-btn' onClick={onPresentAccountModal}>My Wallet</CustomButton> */}
+              {/* <Button onClick={onPresentAccountModal} size="sm" text="My Wallet" /> */}
+            </>
+          )}
         </StyledMobileMenu>
       </StyledMobileMenuWrapper>
     )

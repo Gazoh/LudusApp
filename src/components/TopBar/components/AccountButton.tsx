@@ -27,7 +27,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
   }, [onPresentWalletProviderModal])
 
   return (
-    <StyledAccountButton>
+    <StyledAccountButton className='styled-account-btn'>
       {!account ? (
         <>
           <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
