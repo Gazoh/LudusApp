@@ -19,6 +19,7 @@ import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
 import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
 
 import CustomButton from '../../components/CustomButton/CustomButton'
+import BigNumber from 'bignumber.js'
 
 const StakingContent: React.FC = () => {
     const { account, ethereum } = useWallet()
@@ -53,6 +54,9 @@ const StakingContent: React.FC = () => {
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
     useEffect(() => {
+        // let test = new BigNumber(12).times(1e18).toString(10);
+        // console.log(test)
+
         // setting Ludus & LP Balance
         if (account !== null) {
             const balLudus = LudusContract.methods.balanceOf(account).call();
@@ -191,7 +195,7 @@ const StakingContent: React.FC = () => {
     }
 
     /* 
-    * @returns Ludus Approve
+    * @returns Single asset Approve
     * @TODO Amount of approve needs to be dynamic
     */
     const approveSingleAsset = async () => {
@@ -247,7 +251,7 @@ const StakingContent: React.FC = () => {
     }
 
     /* 
-    * @returns Unstakes Single asset
+    * @returns Unstakes the Single asset
     */
     const unstakeSingleAsset = async () => {
         const encodedABI = LudusStakingContract.methods.exit().encodeABI();
@@ -270,7 +274,7 @@ const StakingContent: React.FC = () => {
     */
     const approveLPStaking = async () => {
         const encodedABI = UniswapV2Contract.methods.approve(account, 10000000000).encodeABI();
-        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled approve for LP', toastOptionsError)

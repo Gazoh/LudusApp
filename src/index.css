@@ -307,6 +307,7 @@ footer {
     .card-wrap {
       max-width: none;
       box-sizing: border-box;
+      padding: 24px;
     }
 
     .card-wrap-column {
@@ -318,10 +319,9 @@ footer {
       max-width: none;
     }
 
-    .farms-content-wrap,
     .farms-content {
       width: 100%;
-      padding: 24px 48px;
+      padding: 16px;
     }
 }
 
@@ -362,4 +362,4 @@ footer {
   .card-content-btm button:last-child {
     margin: 0;
   }
- }
+}
