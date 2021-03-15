@@ -75,13 +75,13 @@ const StakingContent: React.FC = () => {
         await sendTransaction(ethereum, account, RaribleTokenContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled Transaction', toastOptionsError)
+                    toast('Cancelled approve for NFT', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
-                toast('Transaction succeeded', toastOptionsSuccess)
+                toast('Approve succeeded for NFT', toastOptionsSuccess)
             });
     }
 
@@ -94,13 +94,13 @@ const StakingContent: React.FC = () => {
             sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
-                        toast('Cancelled stake', toastOptionsError)
+                        toast('Cancelled stake for NFT', toastOptionsError)
                     } else {
                         toast(err.message, toastOptionsError)
                     }
                 },
                 () => { // onSuccess
-                    toast('Stake succeeded', toastOptionsSuccess)
+                    toast('Stake succeeded for NFT', toastOptionsSuccess)
                 });
         }
         if (ludusGenesis002 > 0) {
@@ -108,13 +108,13 @@ const StakingContent: React.FC = () => {
             sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
-                        toast('Cancelled stake', toastOptionsError)
+                        toast('Cancelled stake for NFT', toastOptionsError)
                     } else {
                         toast(err.message, toastOptionsError)
                     }
                 },
                 () => { // onSuccess
-                    toast('Stake succeeded', toastOptionsSuccess)
+                    toast('Stake succeeded for NFT', toastOptionsSuccess)
                 });
         }
         if (ludusGenesis003 > 0) {
@@ -141,13 +141,13 @@ const StakingContent: React.FC = () => {
         sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled claim', toastOptionsError)
+                    toast('Cancelled claim for NFT', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
-                toast('Claim succeeded', toastOptionsSuccess)
+                toast('Claiming succeeded for NFT', toastOptionsSuccess)
             });
     }
 
@@ -162,55 +162,105 @@ const StakingContent: React.FC = () => {
         sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI1, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled unstaking', toastOptionsError)
+                    toast('Cancelled unstaking for NFT', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
-                toast('Claim succeeded', toastOptionsSuccess)
+                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
             });
         sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI2, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled unstaking', toastOptionsError)
+                    toast('Cancelled unstaking for NFT', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
-                toast('Claim succeeded', toastOptionsSuccess)
+                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
             });
         sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI3, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled unstaking', toastOptionsError)
+                    toast('Cancelled unstaking for NFT', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
-                toast('Claim succeeded', toastOptionsSuccess)
+                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
             });
     }
 
-    // Single Asset Staking
-
+    /* 
+    * @returns Ludus Approve
+    * @TODO Where do i approve, the Ludus Staking?
+    */
     const approveSingleAsset = async () => {
-        // TODO approve amount must be a input for user 
-        const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
-        const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
-        console.log('hx', hx)
+
     }
 
-    const stakeSingleAsset = () => {
-        const stake = LudusStakingContract.methods.stake(1).call();
-        stake.then((s: any) => console.log('s', s))
-        console.log('LudusStakingContract', LudusStakingContract)
+    /* 
+    * @returns Single Asset Stake
+    * @TODO Where do i get the stake amount from?
+    */
+    const stakeSingleAsset = async () => {
+        const encodedABI = LudusStakingContract.methods.stake(1).encodeABI();
+        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled staking for single asset', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Staking succeeded for single asset', toastOptionsSuccess)
+            });
     }
 
-    // LP Staking
+    /* 
+    * @returns Claims Single asset
+    */
+    const claimSingleAsset = async () => {
+        const encodedABI = LudusStakingContract.methods.claim().encodeABI();
+        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled claim for single asset', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claiming succeeded for single asset', toastOptionsSuccess)
+            });
+    }
 
+    /* 
+    * @returns Unstakes Single asset
+    */
+    const unstakeSingleAsset = async () => {
+        const encodedABI = LudusStakingContract.methods.exit().encodeABI();
+        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled claim for single asset', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claiming succeeded for single asset', toastOptionsSuccess)
+            });
+    }
+
+    /* 
+    * @returns LP Approve
+    * @TODO Where do i approve, the LP Staking?
+    */
     const approveLPStaking = async () => {
         // // TODO approve amount must be a input for user 
         // const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
@@ -218,10 +268,59 @@ const StakingContent: React.FC = () => {
         // console.log('hx', hx)
     }
 
-    const stakeLP = () => {
-        // const stake = LPStakingContract.methods.stake(10000000000).call();
-        // stake.then((s: any) => console.log('s', s))
-        // console.log('LPStakingContract', LPStakingContract)
+    /* 
+    * @returns LP Stake
+    * @TODO Where do i get the staking amount from?
+    */
+    const stakeLP = async () => {
+        const encodedABI = LPStakingContract.methods.stake(1).encodeABI();
+        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled staking for LP', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Staking succeeded for LP', toastOptionsSuccess)
+            });
+    }
+
+    /* 
+    * @returns LP Claim
+    */
+    const claimLP = async () => {
+        const encodedABI = LPStakingContract.methods.claim().encodeABI();
+        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled claim for LP', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claiming succeeded for LP', toastOptionsSuccess)
+            });
+    }
+
+    /* 
+    * @returns LP Unstake
+    */
+    const unstakeLP = async () => {
+        const encodedABI = LPStakingContract.methods.exit().encodeABI();
+        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled unstaking for LP', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Unstaking succeeded for LP', toastOptionsSuccess)
+            });
     }
 
     return (
@@ -275,8 +374,8 @@ const StakingContent: React.FC = () => {
                         <div className='card-content-btm'>
                             <CustomButton className='button' disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
                             <CustomButton className='b-btn main' disabled={!account} onClick={stakeSingleAsset}>Stake</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={claimSingleAsset}>Claim</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={unstakeSingleAsset}>Unstake</CustomButton>
                         </div>
                     </div>
                     <div className='card-wrap'>
@@ -288,8 +387,8 @@ const StakingContent: React.FC = () => {
                         <div className='card-content-btm'>
                             <CustomButton className='button' disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
                             <CustomButton className='b-btn main' disabled={!account} onClick={stakeLP}>Stake</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={claimLP}>Claim</CustomButton>
+                            <CustomButton className='b-btn main' disabled={!account} onClick={unstakeLP}>Unstake</CustomButton>
                         </div>
                     </div>
                 </div>
