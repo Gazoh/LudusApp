@@ -12,6 +12,7 @@ import RaribleABI from '../../assets/abi/RaribleABI.json';
 import LPStakingABI from '../../assets/abi/LPStakingABI.json';
 import LudusABI from '../../assets/abi/LudusABI.json';
 import LudusStakingABI from '../../assets/abi/LudusStakingABI.json';
+import UniswapV2ABI from '../../assets/abi/UniswapV2ABI.json';
 
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
@@ -28,19 +29,14 @@ const StakingContent: React.FC = () => {
     const LPStakingContractAddress = '0x9494b87a5bc8D7Be31f88821E5081Dc5aB029EB2'
     const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
     const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
-
-    // Kovan
-    // const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
-    // const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
-    // const LPStakingContractAddress = '0x9494b87a5bc8D7Be31f88821E5081Dc5aB029EB2'
-    // const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
-
+    const UniswapV2ContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
 
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [account])
     const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [account])
     const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContractAddress) }, [account])
     const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [account])
     const RaribleContract = useMemo(() => { return getContractOf(RaribleABI, ethereum as provider, RaribleTokenContractAddress) }, [account])
+    const UniswapV2Contract = useMemo(() => { return getContractOf(UniswapV2ABI, ethereum as provider, UniswapV2ContractAddress) }, [account])
 
     const ludusGenesis001ID = 181087
     const ludusGenesis002ID = 181123
@@ -196,10 +192,21 @@ const StakingContent: React.FC = () => {
 
     /* 
     * @returns Ludus Approve
-    * @TODO Where do i approve, the Ludus Staking?
+    * @TODO Amount of approve needs to be dynamic
     */
     const approveSingleAsset = async () => {
-
+        const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
+        await sendTransaction(ethereum, account, LudusContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled staking for single asset', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Staking succeeded for single asset', toastOptionsSuccess)
+            });
     }
 
     /* 
@@ -259,13 +266,21 @@ const StakingContent: React.FC = () => {
 
     /* 
     * @returns LP Approve
-    * @TODO Where do i approve, the LP Staking?
+    * @TODO Amount of approve needs to be dynamic
     */
     const approveLPStaking = async () => {
-        // // TODO approve amount must be a input for user 
-        // const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
-        // const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
-        // console.log('hx', hx)
+        const encodedABI = UniswapV2Contract.methods.approve(account, 10000000000).encodeABI();
+        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled approve for LP', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Approve succeeded for LP', toastOptionsSuccess)
+            });
     }
 
     /* 
