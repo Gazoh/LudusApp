@@ -1,10 +1,9 @@
 import Web3 from 'web3'
 
-export const sendTransaction = async (provider: any, fromAddress: any, toAddress: any, encodedABI: any, wei = `0x0`) => {
+export const sendTransaction = async (provider: any, fromAddress: any, toAddress: any, encodedABI: any, wei = `0x0`, onError?: Function, onSuccess?: Function) => {
     const web3 = new Web3(provider)
     if (window.ethereum && web3) {
         try {
-
             const gasPrice = await web3.eth.getGasPrice();
             const tx = {
                 from: fromAddress,
@@ -20,9 +19,11 @@ export const sendTransaction = async (provider: any, fromAddress: any, toAddress
                     })
                     .on('receipt', (receipt) => {
                         resolve(receipt);
+                        if(onSuccess) onSuccess()
                     })
                     .on('error', (err) => {
                         reject(err);
+                        if(onError) onError(err)
                     });
             });
         } catch (err) {

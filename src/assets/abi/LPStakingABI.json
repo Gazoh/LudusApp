@@ -3,7 +3,12 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "_token",
+                "name": "stakeToken_",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "rewardToken_",
                 "type": "address"
             }
         ],
@@ -50,12 +55,6 @@
     },
     {
         "anonymous": false,
-        "inputs": [],
-        "name": "RoundReset",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
         "inputs": [
             {
                 "indexed": true,
@@ -94,7 +93,7 @@
     },
     {
         "inputs": [],
-        "name": "ROUND_DURATION",
+        "name": "DURATION",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -107,12 +106,38 @@
     },
     {
         "inputs": [],
-        "name": "admin",
+        "name": "FARMING_END_TIMESTAMP",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "uint256",
                 "name": "",
-                "type": "address"
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "FARMING_START_TIMESTAMP",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "REWARD_ALLOCATION",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -122,7 +147,7 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "account",
+                "name": "account_",
                 "type": "address"
             }
         ],
@@ -146,28 +171,9 @@
     },
     {
         "inputs": [],
-        "name": "claimStarted",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "farmingStartTimestamp",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
+        "name": "exit",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -198,38 +204,31 @@
     },
     {
         "inputs": [],
-        "name": "lastUpdateTimestamp",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "minted",
-        "outputs": [
-            {
-                "internalType": "contract CROPu",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
         "name": "owner",
         "outputs": [
             {
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account_",
+                "type": "address"
+            }
+        ],
+        "name": "pendingReward",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -244,65 +243,7 @@
     },
     {
         "inputs": [],
-        "name": "resetTimestamp",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "rewardAllocation",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "rewardEarned",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
         "name": "rewardPerToken",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "rewardPerTokenStored",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -327,23 +268,23 @@
         "type": "function"
     },
     {
-        "inputs": [
+        "inputs": [],
+        "name": "rewardToken",
+        "outputs": [
             {
-                "internalType": "address",
-                "name": "_minted",
+                "internalType": "contract IMintable",
+                "name": "",
                 "type": "address"
             }
         ],
-        "name": "setMinted",
-        "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_amount",
+                "name": "amount_",
                 "type": "uint256"
             }
         ],
@@ -354,14 +295,7 @@
     },
     {
         "inputs": [],
-        "name": "toggleClaim",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "token",
+        "name": "stakeToken",
         "outputs": [
             {
                 "internalType": "contract IERC20",
@@ -402,11 +336,24 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_amount",
+                "name": "amount_",
                 "type": "uint256"
             }
         ],
         "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "amount_",
+                "type": "uint256"
+            }
+        ],
+        "name": "withdrawAndClaim",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

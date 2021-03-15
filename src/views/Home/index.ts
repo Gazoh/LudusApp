@@ -1,1 +1,1 @@
-export { default } from '../Farms/Farms';
+export { default } from '../Staking/Staking';

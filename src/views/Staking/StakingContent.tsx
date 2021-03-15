@@ -4,33 +4,43 @@ import { icons } from '../../helpers/icon'
 import { useWallet } from 'use-wallet'
 import { provider } from 'web3-core'
 import { getContractOf } from '../../utils/erc20'
+import { sendTransaction } from '../../utils/utils'
+import { toast, ToastOptions } from 'react-toastify';
 
-import NFTStakingABI from '../../assets/abi/test/NFTStakingABI.json';
-import NFTMockABI from '../../assets/abi/test/NFTMockABI.json';
-import LPStakingABI from '../../assets/abi/test/LPStakingABI.json';
-import LudusABI from '../../assets/abi/test/LudusABI.json';
-import LudusStakingABI from '../../assets/abi/test/LudusStakingABI.json';
+import NFTStakingABI from '../../assets/abi/NFTStakingABI.json';
+import RaribleABI from '../../assets/abi/RaribleABI.json';
+import LPStakingABI from '../../assets/abi/LPStakingABI.json';
+import LudusABI from '../../assets/abi/LudusABI.json';
+import LudusStakingABI from '../../assets/abi/LudusStakingABI.json';
 
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
 import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
+
 import CustomButton from '../../components/CustomButton/CustomButton'
-import { sendTransaction } from '../../utils/utils'
 
 const StakingContent: React.FC = () => {
     const { account, ethereum } = useWallet()
 
-    const LudusStakingContractAddress = '0xDb2f554A333D189ed59eA36020a83F7d6De14328'
-    const LudusContractAddress = '0xFe44FF05D7C06E792D6eF4762B2441e82Bc602a5'
-    const LPStakingContractAddress = '0x94A44de106112A761B69dFBEB1ac6cfdD1B80304'
-    const NFTStakingContractAddress = '0x47330D2fe6F75899597C14d615003Ef561B01B14'
-    const NFTMockContracttAddress = '0x07bf260a44CEADfad215cc8e20c5b0398D25b1FA'
+    // Main Net
+    const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
+    const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
+    const LPStakingContractAddress = '0x9494b87a5bc8D7Be31f88821E5081Dc5aB029EB2'
+    const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
+    const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
+
+    // Kovan
+    // const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
+    // const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
+    // const LPStakingContractAddress = '0x9494b87a5bc8D7Be31f88821E5081Dc5aB029EB2'
+    // const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
+
 
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [account])
     const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [account])
     const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContractAddress) }, [account])
     const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [account])
-    const NFTMockContract = useMemo(() => { return getContractOf(NFTMockABI, ethereum as provider, NFTMockContracttAddress) }, [account])
+    const RaribleContract = useMemo(() => { return getContractOf(RaribleABI, ethereum as provider, RaribleTokenContractAddress) }, [account])
 
     const ludusGenesis001ID = 181087
     const ludusGenesis002ID = 181123
@@ -43,6 +53,9 @@ const StakingContent: React.FC = () => {
     const [ludusBalance, setLudusBalance] = useState(0)
     const [lpBalance, setLpBalance] = useState(0)
 
+    let toastOptionsError: ToastOptions = { type: 'error' }
+    let toastOptionsSuccess: ToastOptions = { type: 'success' }
+
     useEffect(() => {
         // setting Ludus & LP Balance
         if (account !== null) {
@@ -52,21 +65,133 @@ const StakingContent: React.FC = () => {
             balLP.then((b: any) => setLpBalance(b))
 
         }
-    }, [account])
+    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003])
 
-    // NFT Staking
-
+    /* 
+    * @returns Approves NFT Staking
+    */
     const approveNFTStaking = async () => {
-        const encodedABI = NFTMockContract.methods.setApprovalForAll(NFTStakingContractAddress, true).encodeABI();
-        const hx = await sendTransaction(ethereum, account, NFTMockContracttAddress, encodedABI);
-        console.log('hx', hx)
-        console.log('NFTMockContract', NFTMockContract)
+        const encodedABI = RaribleContract.methods.setApprovalForAll(NFTStakingContractAddress, true).encodeABI();
+        await sendTransaction(ethereum, account, RaribleTokenContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled Transaction', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Transaction succeeded', toastOptionsSuccess)
+            });
     }
 
+    /* 
+    * @returns Stakes your NFT amount
+    */
     const stakeNFT = () => {
-        const stakeMethode = NFTStakingContract.methods.stake('181087', 1).call();
-        stakeMethode.then((staked: any) => console.log('staked', staked))
-        console.log('NFTStakingContract', NFTStakingContract)
+        if (ludusGenesis001 > 0) {
+            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis001ID, ludusGenesis001).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled stake', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Stake succeeded', toastOptionsSuccess)
+                });
+        }
+        if (ludusGenesis002 > 0) {
+            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis002ID, ludusGenesis002).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled stake', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Stake succeeded', toastOptionsSuccess)
+                });
+        }
+        if (ludusGenesis003 > 0) {
+            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis003ID, ludusGenesis003).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled stake', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Stake succeeded', toastOptionsSuccess)
+                });
+        }
+    }
+
+    /* 
+    * @returns Claims NFT
+    */
+    const claimNFT = () => {
+        const encodedABI = NFTStakingContract.methods.claim().encodeABI();
+        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled claim', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claim succeeded', toastOptionsSuccess)
+            });
+    }
+
+    /* 
+    * @returns Unstakes all the NFT's
+    * @TODO Check current stakes and send transactions to those one's and not to all NFT's
+    */
+    const unstakeNFT = () => {
+        const encodedABI1 = NFTStakingContract.methods.exit(ludusGenesis001ID).encodeABI();
+        const encodedABI2 = NFTStakingContract.methods.exit(ludusGenesis002ID).encodeABI();
+        const encodedABI3 = NFTStakingContract.methods.exit(ludusGenesis003ID).encodeABI();
+        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI1, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled unstaking', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claim succeeded', toastOptionsSuccess)
+            });
+        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI2, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled unstaking', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claim succeeded', toastOptionsSuccess)
+            });
+        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI3, '0x0',
+            (err: any) => { // onError
+                if (err.code === 4001) {
+                    toast('Cancelled unstaking', toastOptionsError)
+                } else {
+                    toast(err.message, toastOptionsError)
+                }
+            },
+            () => { // onSuccess
+                toast('Claim succeeded', toastOptionsSuccess)
+            });
     }
 
     // Single Asset Staking
@@ -79,7 +204,7 @@ const StakingContent: React.FC = () => {
     }
 
     const stakeSingleAsset = () => {
-        const stake = LudusStakingContract.methods.stake(10000000000).call();
+        const stake = LudusStakingContract.methods.stake(1).call();
         stake.then((s: any) => console.log('s', s))
         console.log('LudusStakingContract', LudusStakingContract)
     }
@@ -87,16 +212,16 @@ const StakingContent: React.FC = () => {
     // LP Staking
 
     const approveLPStaking = async () => {
-        // TODO approve amount must be a input for user 
-        const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
-        const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
-        console.log('hx', hx)
+        // // TODO approve amount must be a input for user 
+        // const encodedABI = LudusContract.methods.approve(account, 10000000000).encodeABI();
+        // const hx = await sendTransaction(ethereum, account, LudusContractAddress, encodedABI);
+        // console.log('hx', hx)
     }
 
     const stakeLP = () => {
-        const stake = LPStakingContract.methods.stake(10000000000).call();
-        stake.then((s: any) => console.log('s', s))
-        console.log('LPStakingContract', LPStakingContract)
+        // const stake = LPStakingContract.methods.stake(10000000000).call();
+        // stake.then((s: any) => console.log('s', s))
+        // console.log('LPStakingContract', LPStakingContract)
     }
 
     return (
@@ -135,9 +260,9 @@ const StakingContent: React.FC = () => {
                     </div>
                     <div className='card-content-btm'>
                         <CustomButton className='button' disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account} onClick={stakeNFT}>Stake</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Claim</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account}>Unstake</CustomButton>
+                        <CustomButton className='b-btn main' disabled={(!account) || (ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0)} onClick={stakeNFT}>Stake</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account} onClick={claimNFT}>Claim</CustomButton>
+                        <CustomButton className='b-btn main' disabled={!account} onClick={unstakeNFT}>Unstake</CustomButton>
                     </div>
                 </div>
                 <div className='card-wrap-column'>

@@ -23,7 +23,7 @@ import { TerraFarm } from '../../components/Lottie'
 import Spacer from '../../components/Spacer'
 import MuiPaper from '@material-ui/core/Paper'
 import CustomButton from '../../components/CustomButton/CustomButton'
-import FarmsContent from './FarmsContent'
+import FarmsContent from './StakingContent'
 
 const Paper = withStyles({
   rounded: {

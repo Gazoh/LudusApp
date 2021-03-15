@@ -1,1 +1,1 @@
-export { default } from './StakingContent'
+export { default } from './Staking'
