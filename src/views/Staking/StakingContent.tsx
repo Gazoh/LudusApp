@@ -9,6 +9,7 @@ import { toast, ToastOptions } from 'react-toastify';
 import { countNumbers } from '../../helpers/AnimationHelper';
 import { useSpring, animated } from 'react-spring'
 
+import Web3 from 'web3'
 import NFTStakingABI from '../../assets/abi/NFTStakingABI.json';
 import RaribleABI from '../../assets/abi/RaribleABI.json';
 import LPStakingABI from '../../assets/abi/LPStakingABI.json';
@@ -24,8 +25,8 @@ import CustomButton from '../../components/CustomButton/CustomButton'
 import BigNumber from 'bignumber.js'
 
 const StakingContent: React.FC = () => {
-    const { account, ethereum } = useWallet()
-
+    const { ethereum }: { ethereum: provider } = useWallet()
+    const { account } = useWallet()
     // Main Net
     const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
     const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
@@ -62,12 +63,20 @@ const StakingContent: React.FC = () => {
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
     useEffect(() => {
+        const web3 = new Web3(ethereum);
         // setting Ludus & LP Balance
         if (account !== null) {
             const balLudus = LudusContract.methods.balanceOf(account).call();
-            balLudus.then((b: any) => setLudusBalance(parseFloat(b)))
+            balLudus.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'ether');
+                setLudusBalance(parseFloat(a))
+            })
+
             const balLP = LPStakingContract.methods.balanceOf(account).call();
-            balLP.then((b: any) => setLPBalance(parseFloat(b)))
+            balLP.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'ether');
+                setStakeLPValue(parseFloat(a))
+            })
 
         }
     }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpBalance])
