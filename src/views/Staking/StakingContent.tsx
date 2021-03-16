@@ -75,7 +75,7 @@ const StakingContent: React.FC = () => {
             const balLP = LPStakingContract.methods.balanceOf(account).call();
             balLP.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
-                setStakeLPValue(parseFloat(a))
+                setLPBalance(parseFloat(a))
             })
 
         }
