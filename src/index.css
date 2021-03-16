@@ -266,6 +266,7 @@ a {
   right: 0;
 }
 
+
 .card-content-btm {
   margin-top: auto;
 }
@@ -294,6 +295,20 @@ footer {
   fill: #ffffff;
 }
 
+.card-content-holder {
+  display: flex;
+}
+
+.card-content-holder .input-selection {
+  right: 72px;
+}
+
+.standAlone {
+  right: 40px;
+  padding: 0;
+  min-width: inherit;
+  border-radius: 50%;
+}
 
 @media only screen and (max-width: 1024px) {
     .farms-content {
@@ -322,6 +337,10 @@ footer {
     .farms-content {
       width: 100%;
       padding: 16px;
+    }
+
+    .standAlone {
+      right: 24px;
     }
 }
 
@@ -361,5 +380,26 @@ footer {
 
   .card-content-btm button:last-child {
     margin: 0;
+  }
+
+  .card-content-holder {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-content-holder .input-selection {
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  .card-wrap-column .card-wrap .card-content-btm {
+    margin-top: 12px;
+  }
+
+  .card-content-holder .input-selection {
+    right: 0;
+  }
+  .standAlone {
+    display: none;
   }
 }
