@@ -14,10 +14,11 @@ interface WalletCardProps {
   icon: React.ReactNode
   onConnect: () => void
   title: string,
-  style?: any
+  style?: any,
+  className?: string
 }
 
-const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, style }) => {
+const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, style, className}) => {
   const [chainId, setChainId] = useState('')
 
   /*useEffect(() => {
@@ -28,7 +29,7 @@ const WalletCard: React.FC<WalletCardProps> = ({ icon, onConnect, title, style }
   }, [chainId])*/
 
   return (
-    <Card style={style}>
+    <Card style={style} className={className}>
       <CardContent>
         <CardIcon>{icon}</CardIcon>
         <CardTitle text={title} />

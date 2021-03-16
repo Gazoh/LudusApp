@@ -1,11 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 type StyleProps = {
-  style?: any
+  style?: any,
+  className?: string
 }
 
-const Card: React.FC<StyleProps> = ({ children, style = {} }) => (
-  <StyledCard style={style}>{children}</StyledCard>
+const Card: React.FC<StyleProps> = ({ className, children, style = {} }) => (
+  <StyledCard style={style} className={className}>{children}</StyledCard>
 )
 
 const StyledCard = styled.div`

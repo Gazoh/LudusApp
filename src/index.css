@@ -374,7 +374,7 @@ footer {
     margin-right: 12px;
   }
 
-  .styled-account-btn {
+  .styled-account-btn .nav-item{
     display: none !important;
   }
 
@@ -399,7 +399,17 @@ footer {
   .card-content-holder .input-selection {
     right: 0;
   }
+
   .standAlone {
     display: none;
+  }
+
+  .wallet-card {
+    padding: 0 !important;
+  }
+
+  .wallet-card div div div div,
+  .modal-actions-btm {
+    padding: 24 !important;
   }
 }

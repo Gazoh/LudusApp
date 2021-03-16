@@ -26,8 +26,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
   return (
     <Modal>
       <ModalTitle text="Select a wallet provider." />
-
-      <ModalContent>
+      <ModalContent className='wallet-card'>
         <StyledWalletsWrapper>
           <StyledWalletCard>
             <WalletCard
