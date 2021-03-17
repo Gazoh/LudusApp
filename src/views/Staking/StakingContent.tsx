@@ -80,7 +80,7 @@ const StakingContent: React.FC = () => {
             })
 
             // LP Balance
-            const balLP = UniswapV2Contract.methods.balanceOf(LPContractAddress).call();
+            const balLP = UniswapV2Contract.methods.balanceOf(account).call();
             balLP.then((b: any) => {
                 console.log('b', b)
                 let a = web3.utils.fromWei(b, 'ether');
@@ -410,13 +410,15 @@ const StakingContent: React.FC = () => {
                     <div className='card-wrap'>
                         <div className='card-title'>Single asset staking</div>
                         <div className='card-content-holder'>
-                            <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                Your Ludus Balance
+                            <div className='card-content-balance'>
+                                <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                    Your Ludus Balance
                                     <div className='card-content-number'>
-                                    {ludusBalance}
+                                        {ludusBalance}
+                                    </div>
                                 </div>
                             </div>
-                            <div className='card-content-holder'>
+                            <div className='card-content-input'>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeSingleAssetValue <= 0 || !account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
                                     <input type="number" disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
@@ -436,19 +438,21 @@ const StakingContent: React.FC = () => {
                         <div className='card-title'>LP Staking</div>
                         <div className='card-content'>
                             <div className='card-content-holder'>
-                                <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                    LP Balance
+                                <div className='card-content-balance'>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Your LP Balance
                                     <div className='card-content-number'>
-                                        {lpBalance}
+                                            {lpBalance}
+                                        </div>
+                                    </div>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Staked
+                                    <div className='card-content-number'>
+                                            {lpStakingBalance}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                    Staked
-                                    <div className='card-content-number'>
-                                        {lpStakingBalance}
-                                    </div>
-                                </div>
-                                <div className='card-content-holder'>
+                                <div className='card-content-input'>
                                     <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                         <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeLPValue <= 0 || !account) ? null : setStakeLPValue(stakeLPValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
                                         <input type="number" disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />

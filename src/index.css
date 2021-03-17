@@ -1,6 +1,4 @@
-html,
-body,
-#root {
+html, body, #root {
   width: 100%;
   height: 100%;
 }
@@ -29,11 +27,11 @@ code {
 
 .farm-container {
   margin: initial !important;
-  margin-bottom: 48px !important; 
+  margin-bottom: 48px !important;
 }
 
 a {
-  color: rgba(229,147,16,1);
+  color: rgba(229, 147, 16, 1);
 }
 
 .b-btn {
@@ -50,8 +48,7 @@ a {
   position: relative;
 }
 
-.b-btn:focus,
-.b-btn.dropdown button:focus {
+.b-btn:focus, .b-btn.dropdown button:focus {
   outline: none;
 }
 
@@ -82,6 +79,7 @@ a {
 .b-btn.dropdown {
   padding: 0;
 }
+
 .b-btn.dropdown button {
   height: 48px;
   border: transparent;
@@ -100,9 +98,7 @@ a {
   color: #0E7DFF;
 }
 
-.b-btn.main:disabled,
-.button:disabled, 
-.input-selection.disabled{
+.b-btn.main:disabled, .button:disabled, .input-selection.disabled {
   cursor: default;
   opacity: 0.32;
 }
@@ -112,17 +108,28 @@ a {
 }
 
 .input-selection-number {
+  background: #FFFFFF;
   border: none;
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
+  max-width: 54px;
+  max-height: 54px;
   text-align: center;
   font-family: 'azo-sans-web', Arial, Helvetica, sans-serif;
   font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #FFFFFF;
+  padding: 0;
 }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 
 .input-selection-number:focus {
   outline: none;
@@ -148,8 +155,7 @@ a {
   box-shadow: none;
 }
 
-.button:focus,
-.nbdr-btn:focus {
+.button:focus, .nbdr-btn:focus {
   outline: none;
 }
 
@@ -160,8 +166,7 @@ a {
   text-decoration: none;
 }
 
-.modal-actions-btm,
-.modal-actions-btm div div button {
+.modal-actions-btm, .modal-actions-btm div div button {
   width: 100%;
 }
 
@@ -240,7 +245,6 @@ a {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  position: absolute;
 }
 
 .card-wrap-column {
@@ -270,7 +274,7 @@ a {
 
 .card-content-text {
   text-align: left;
-  font-size:  20px;
+  font-size: 18px;
   letter-spacing: 0px;
   color: #25252C;
   margin-right: 24px;
@@ -297,20 +301,19 @@ a {
   right: 0;
 }
 
-
 .card-content-btm {
   margin-top: auto;
 }
 
-.card-content-btm button {  
+.card-content-btm button {
   margin: 0 8px;
 }
 
-.card-content-btm button:first-child {  
+.card-content-btm button:first-child {
   margin-left: 0;
 }
 
-.card-content-btm button:last-child {  
+.card-content-btm button:last-child {
   margin-right: 0;
 }
 
@@ -328,52 +331,53 @@ footer {
 
 .card-content-holder {
   display: flex;
+  align-items: center;
+  width: 100%;
   padding: 8px 0;
 }
 
-.card-content-holder .input-selection {
-  right: -80px;
+.card-content-input {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  justify-content: flex-end;
+}
+
+.card-content-balance {
+  display: flex;
+  width: 50%
 }
 
 .standAlone {
-  right: 40px;
   padding: 0;
   min-width: inherit;
   border-radius: 50%;
+  margin-left: 16px;
 }
 
 @media only screen and (max-width: 1024px) {
-    .farms-content {
-      flex-direction: column;
-    }
-  
-    .card-wrap-column .card-wrap {
-      min-width: auto;
-    }
-
-    .card-wrap {
-      max-width: none;
-      box-sizing: border-box;
-      padding: 24px;
-    }
-
-    .card-wrap-column {
-      margin-left: 0;
-      margin-top: 40px;
-    }
-
-    .card-wrap-column .card-wrap {
-      max-width: none;
-    }
-
-    .farms-content {
-      width: 100%;
-      padding: 16px;
-    }
-
-    .standAlone {
-      right: 24px;
-    }
+  .farms-content {
+    flex-direction: column;
+  }
+  .card-wrap-column .card-wrap {
+    min-width: auto;
+  }
+  .card-wrap {
+    max-width: none;
+    box-sizing: border-box;
+    padding: 24px;
+  }
+  .card-wrap-column {
+    margin-left: 0;
+    margin-top: 40px;
+  }
+  .card-wrap-column .card-wrap {
+    max-width: none;
+  }
+  .farms-content {
+    width: 100%;
+    padding: 16px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -384,65 +388,60 @@ footer {
 }
 
 @media only screen and (max-width: 592px) {
- .card-content-btm .b-btn {
-   min-width: auto;
- }
+  .card-content-btm .b-btn {
+    min-width: auto;
+  }
 }
 
 @media only screen and (max-width: 426px) {
   .card-content-btm {
-   display: flex;
-   flex-direction: column;
+    display: flex;
+    flex-direction: column;
   }
-
   .card-content-btm button {
     width: 100%;
     margin: 0;
     margin-bottom: 12px;
   }
-
   .card-content-row-title {
     margin-left: 12px;
     margin-right: 12px;
   }
-
-  .styled-account-btn .nav-item{
+  .styled-account-btn .nav-item {
     display: none !important;
   }
-
   .card-content-btm button:last-child {
     margin: 0;
   }
-
   .card-content-holder {
     display: flex;
     flex-direction: column;
     padding-bottom: 0;
   }
-
   .card-content-holder .input-selection {
     width: 100%;
     margin-top: 24px;
   }
-
   .card-wrap-column .card-wrap .card-content-btm {
     margin-top: 12px;
   }
-
   .card-content-holder .input-selection {
     right: 0;
   }
-
   .standAlone {
     display: none;
   }
-
   .wallet-card {
     padding: 0 !important;
   }
-
-  .wallet-card div div div div,
-  .modal-actions-btm {
+  .wallet-card div div div div, .modal-actions-btm {
     padding: 24 !important;
+  }
+  .card-content-balance,
+  .card-content-input {
+    width: 100%;
+  }
+  .card-content-text:first-child {
+    margin-right: auto;
   }
 }
