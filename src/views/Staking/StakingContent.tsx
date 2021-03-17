@@ -92,7 +92,7 @@ const StakingContent: React.FC = () => {
             })
 
         }
-    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, LPStakingContract.methods, LudusContract.methods, UniswapV2Contract.methods, web3.utils])
+    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, LPStakingContract.methods, LudusContract.methods, UniswapV2Contract.methods, web3.utils, nftStakingDisabled, singleAssetStakingDisabled, lpStakingDisabled])
 
     /* 
     * @returns Approves NFT Staking
