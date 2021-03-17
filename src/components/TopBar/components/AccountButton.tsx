@@ -8,13 +8,12 @@ import WalletProviderModal from '../../WalletProviderModal'
 import AccountModal from './AccountModal'
 import Dropdown from 'react-bootstrap/Dropdown'
 import copy from 'copy-to-clipboard';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface AccountButtonProps { }
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
-  const [onPresentAccountModal] = useModal(<AccountModal />)
   const [onPresentWalletProviderModal] = useModal(
     <WalletProviderModal />,
     'provider',
@@ -30,12 +29,12 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
     <StyledAccountButton className='styled-account-btn'>
       {!account ? (
         <>
-          <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+          <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudus.io</a>
           <CustomButton className='b-btn' onClick={onPresentWalletProviderModal}>Connect to wallet</CustomButton>
         </>
       ) : (
         <>
-          <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+          <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudus.io</a>
           <Dropdown className='b-btn'>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               My Wallet

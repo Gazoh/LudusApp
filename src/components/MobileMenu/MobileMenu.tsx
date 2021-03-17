@@ -29,12 +29,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
         <StyledMobileMenu>
           {!account ? (
             <>
-              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudus.io</a>
               <CustomButton className='b-btn' onClick={onPresentWalletProviderModal}>Connect to wallet</CustomButton>
             </>
           ) : (
             <>
-              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudios.io</a>
+              <a className='nav-item' href='https://playludus.io/' target='_blank'>Go to PlayLudus.io</a>
               <Dropdown className='b-btn'>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                   My Wallet

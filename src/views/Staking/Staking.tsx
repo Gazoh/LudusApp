@@ -52,9 +52,11 @@ const Farms: React.FC = () => {
   const [onPresentWalletProviderModal] = useModal(<WalletProviderModal />)
   return (
     <Switch>
-      <Page>
-        <FarmsContent />
-      </Page>
+      <div className='main-wrap'>
+        <Page>
+          <FarmsContent />
+        </Page>
+      </div>
     </Switch>
   )
 }
