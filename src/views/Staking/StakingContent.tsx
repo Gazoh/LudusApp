@@ -60,8 +60,9 @@ const StakingContent: React.FC = () => {
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
+    const web3 = new Web3(ethereum);
+
     useEffect(() => {
-        const web3 = new Web3(ethereum);
         // setting Ludus & LP Balance
         if (account !== null) {
             // Ludus Balance
@@ -87,7 +88,7 @@ const StakingContent: React.FC = () => {
             })
 
         }
-    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, LPStakingContract.methods, LudusContract.methods])
+    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, LPStakingContract.methods, LudusContract.methods, UniswapV2Contract.methods, web3.utils])
 
     /* 
     * @returns Approves NFT Staking
@@ -294,7 +295,7 @@ const StakingContent: React.FC = () => {
     * @returns LP Approve
     */
     const approveLPStaking = async () => {
-        let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
+        const amount = web3.utils.toWei(stakeLPValue.toString(), 'ether');
         const encodedABI = UniswapV2Contract.methods.approve(account, amount).encodeABI();
         await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -313,7 +314,7 @@ const StakingContent: React.FC = () => {
     * @returns LP Stake
     */
     const stakeLP = async () => {
-        let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
+        const amount = web3.utils.toWei(stakeLPValue.toString(), 'ether');
         const encodedABI = LPStakingContract.methods.stake(amount).encodeABI();
         await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -418,7 +419,7 @@ const StakingContent: React.FC = () => {
                             <div className='card-content-holder'>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeSingleAssetValue <= 0 || !account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                    <input disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
+                                    <input type="number" disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
                                     <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
                                 <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeSingleAssetValue(ludusBalance)}>MAX</CustomButton>
@@ -450,7 +451,7 @@ const StakingContent: React.FC = () => {
                                 <div className='card-content-holder'>
                                     <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                         <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeLPValue <= 0 || !account) ? null : setStakeLPValue(stakeLPValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                        <input disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />
+                                        <input type="number" disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />
                                         <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeLPValue(stakeLPValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                     </div>
                                     <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeLPValue(lpBalance)}>MAX</CustomButton>
