@@ -34,7 +34,6 @@ const StakingContent: React.FC = () => {
     const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
     const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
     const UniswapV2ContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
-    const LPContractAddress = '0x6673f7942a31517b18cf4627389870b5d8c17e72'
 
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [ethereum])
     const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [ethereum])
@@ -50,12 +49,17 @@ const StakingContent: React.FC = () => {
     const [ludusGenesis001, setLudusGenesis001] = useState(0)
     const [ludusGenesis002, setLudusGenesis002] = useState(0)
     const [ludusGenesis003, setLudusGenesis003] = useState(0)
+
     const [stakeSingleAssetValue, setStakeSingleAssetValue] = useState(0)
     const [stakeLPValue, setStakeLPValue] = useState(0)
 
     const [ludusBalance, setLudusBalance] = useState(0)
     const [lpStakingBalance, setLPStakingBalance] = useState(0)
     const [lpBalance, setLPBalance] = useState(0)
+
+    const [nftStakingDisabled, setNftStakingDisabled] = useState(true)
+    const [singleAssetStakingDisabled, setSingleAssetStakingDisabled] = useState(true)
+    const [lpStakingDisabled, setLpStakingDisabled] = useState(true)
 
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
@@ -104,6 +108,7 @@ const StakingContent: React.FC = () => {
                 }
             },
             () => { // onSuccess
+                setNftStakingDisabled(false)
                 toast('Approve succeeded for NFT', toastOptionsSuccess)
             });
     }
@@ -176,7 +181,6 @@ const StakingContent: React.FC = () => {
 
     /* 
     * @returns Unstakes all the NFT's
-    * @TODO Check current stakes and send transactions to those one's and not to all NFT's
     */
     const unstakeNFT = () => {
         const encodedABI1 = NFTStakingContract.methods.exit(ludusGenesis001ID).encodeABI();
@@ -232,6 +236,7 @@ const StakingContent: React.FC = () => {
                 }
             },
             () => { // onSuccess
+                setSingleAssetStakingDisabled(false)
                 toast('Staking succeeded for single asset', toastOptionsSuccess)
             });
     }
@@ -306,6 +311,7 @@ const StakingContent: React.FC = () => {
                 }
             },
             () => { // onSuccess
+                setLpStakingDisabled(false)
                 toast('Approve succeeded for LP', toastOptionsSuccess)
             });
     }
@@ -400,10 +406,10 @@ const StakingContent: React.FC = () => {
                         </div>
                     </div>
                     <div className='card-content-btm'>
-                        <CustomButton className='button' disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
-                        <CustomButton className='b-btn main' disabled={(!account) || (ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0)} onClick={stakeNFT}>Stake</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account} onClick={claimNFT}>Claim</CustomButton>
-                        <CustomButton className='b-btn main' disabled={!account} onClick={unstakeNFT}>Unstake</CustomButton>
+                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
+                        <CustomButton className={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || nftStakingDisabled ? 'b-btn main' : `button`} disabled={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || (nftStakingDisabled)} onClick={stakeNFT}>Stake</CustomButton>
+                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimNFT}>Claim</CustomButton>
+                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeNFT}>Unstake</CustomButton>
                     </div>
                 </div>
                 <div className='card-wrap-column'>
@@ -428,10 +434,10 @@ const StakingContent: React.FC = () => {
                             </div>
                         </div>
                         <div className='card-content-btm'>
-                            <CustomButton className='button' disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
-                            <CustomButton className='b-btn main' disabled={(!account || stakeSingleAssetValue <= 0)} onClick={stakeSingleAsset}>Stake</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account} onClick={claimSingleAsset}>Claim</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account} onClick={unstakeSingleAsset}>Unstake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
+                            <CustomButton className={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled)} onClick={stakeSingleAsset}>Stake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimSingleAsset}>Claim</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeSingleAsset}>Unstake</CustomButton>
                         </div>
                     </div>
                     <div className='card-wrap'>
@@ -463,10 +469,10 @@ const StakingContent: React.FC = () => {
                             </div>
                         </div>
                         <div className='card-content-btm'>
-                            <CustomButton className='button' disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
-                            <CustomButton className='b-btn main' disabled={(!account || stakeLPValue <= 0)} onClick={stakeLP}>Stake</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account} onClick={claimLP}>Claim</CustomButton>
-                            <CustomButton className='b-btn main' disabled={!account} onClick={unstakeLP}>Unstake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
+                            <CustomButton className={(!account || stakeLPValue <= 0 || lpStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeLPValue <= 0 || lpStakingDisabled)} onClick={stakeLP}>Stake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimLP}>Claim</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeLP}>Unstake</CustomButton>
                         </div>
                     </div>
                 </div>
