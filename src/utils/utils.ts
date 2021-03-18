@@ -16,10 +16,10 @@ export const sendTransaction = async (provider: any, fromAddress: any, toAddress
                 web3.eth.sendTransaction(tx)
                     .on('transactionHash', (hash) => {
                         resolve(hash)
+                        if(onSuccess) onSuccess()
                     })
                     .on('receipt', (receipt) => {
                         resolve(receipt);
-                        if(onSuccess) onSuccess()
                     })
                     .on('error', (err) => {
                         reject(err);

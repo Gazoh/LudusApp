@@ -86,7 +86,6 @@ const StakingContent: React.FC = () => {
             // LP Balance
             const balLP = UniswapV2Contract.methods.balanceOf(account).call();
             balLP.then((b: any) => {
-                console.log('b', b)
                 let a = web3.utils.fromWei(b, 'ether');
                 setLPBalance(parseFloat(parseFloat(a).toFixed(2)))
             })
@@ -225,19 +224,19 @@ const StakingContent: React.FC = () => {
     * @returns Single asset Approve
     */
     const approveSingleAsset = async () => {
-        let amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
+        const amount = web3.utils.toWei(stakeSingleAssetValue.toString(), 'ether');
         const encodedABI = LudusContract.methods.approve(account, amount).encodeABI();
         await sendTransaction(ethereum, account, LudusContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
-                    toast('Cancelled staking for single asset', toastOptionsError)
+                    toast('Cancelled approving for single asset', toastOptionsError)
                 } else {
                     toast(err.message, toastOptionsError)
                 }
             },
             () => { // onSuccess
                 setSingleAssetStakingDisabled(false)
-                toast('Staking succeeded for single asset', toastOptionsSuccess)
+                toast('Approving succeeded for single asset', toastOptionsSuccess)
             });
     }
 
@@ -245,7 +244,7 @@ const StakingContent: React.FC = () => {
     * @returns Single Asset Stake
     */
     const stakeSingleAsset = async () => {
-        let amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
+        const amount = web3.utils.toWei(stakeSingleAssetValue.toString(), 'ether');
         const encodedABI = LudusStakingContract.methods.stake(amount).encodeABI();
         await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
