@@ -6,8 +6,6 @@ import { provider } from 'web3-core'
 import { getContractOf } from '../../utils/erc20'
 import { sendTransaction } from '../../utils/utils'
 import { toast, ToastOptions } from 'react-toastify';
-import { countNumbers } from '../../helpers/AnimationHelper';
-import { useSpring, animated } from 'react-spring'
 
 import Web3 from 'web3'
 import NFTStakingABI from '../../assets/abi/NFTStakingABI.json';
@@ -23,6 +21,7 @@ import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
 
 import CustomButton from '../../components/CustomButton/CustomButton'
 import BigNumber from 'bignumber.js'
+import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
 
 const StakingContent: React.FC = () => {
     const { ethereum }: { ethereum: provider } = useWallet()
@@ -60,6 +59,8 @@ const StakingContent: React.FC = () => {
     const [nftStakingDisabled, setNftStakingDisabled] = useState(true)
     const [singleAssetStakingDisabled, setSingleAssetStakingDisabled] = useState(true)
     const [lpStakingDisabled, setLpStakingDisabled] = useState(true)
+
+    const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
 
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
@@ -181,50 +182,56 @@ const StakingContent: React.FC = () => {
     /* 
     * @returns Unstakes all the NFT's
     */
-    const unstakeNFT = () => {
-        const encodedABI1 = NFTStakingContract.methods.exit(ludusGenesis001ID).encodeABI();
-        const encodedABI2 = NFTStakingContract.methods.exit(ludusGenesis002ID).encodeABI();
-        const encodedABI3 = NFTStakingContract.methods.exit(ludusGenesis003ID).encodeABI();
-        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI1, '0x0',
-            (err: any) => { // onError
-                if (err.code === 4001) {
-                    toast('Cancelled unstaking for NFT', toastOptionsError)
-                } else {
-                    toast(err.message, toastOptionsError)
-                }
-            },
-            () => { // onSuccess
-                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
-            });
-        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI2, '0x0',
-            (err: any) => { // onError
-                if (err.code === 4001) {
-                    toast('Cancelled unstaking for NFT', toastOptionsError)
-                } else {
-                    toast(err.message, toastOptionsError)
-                }
-            },
-            () => { // onSuccess
-                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
-            });
-        sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI3, '0x0',
-            (err: any) => { // onError
-                if (err.code === 4001) {
-                    toast('Cancelled unstaking for NFT', toastOptionsError)
-                } else {
-                    toast(err.message, toastOptionsError)
-                }
-            },
-            () => { // onSuccess
-                toast('Unstaking succeeded for NFT', toastOptionsSuccess)
-            });
+    const unstakeNFT = (id: number) => {
+        if (id === 1) {
+            const encodedABI1 = NFTStakingContract.methods.exit(ludusGenesis001ID).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI1, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled unstaking for NFT', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Unstaking succeeded for NFT', toastOptionsSuccess)
+                });
+        }
+        if (id === 2) {
+            const encodedABI2 = NFTStakingContract.methods.exit(ludusGenesis002ID).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI2, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled unstaking for NFT', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Unstaking succeeded for NFT', toastOptionsSuccess)
+                });
+        }
+        if (id === 3) {
+            const encodedABI3 = NFTStakingContract.methods.exit(ludusGenesis003ID).encodeABI();
+            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI3, '0x0',
+                (err: any) => { // onError
+                    if (err.code === 4001) {
+                        toast('Cancelled unstaking for NFT', toastOptionsError)
+                    } else {
+                        toast(err.message, toastOptionsError)
+                    }
+                },
+                () => { // onSuccess
+                    toast('Unstaking succeeded for NFT', toastOptionsSuccess)
+                });
+        }
     }
 
     /* 
     * @returns Single asset Approve
     */
     const approveSingleAsset = async () => {
-        const amount = web3.utils.toWei(stakeSingleAssetValue.toString(), 'ether');
+        let amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
         const encodedABI = LudusContract.methods.approve(account, amount).encodeABI();
         await sendTransaction(ethereum, account, LudusContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -244,7 +251,7 @@ const StakingContent: React.FC = () => {
     * @returns Single Asset Stake
     */
     const stakeSingleAsset = async () => {
-        const amount = web3.utils.toWei(stakeSingleAssetValue.toString(), 'ether');
+        let amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
         const encodedABI = LudusStakingContract.methods.stake(amount).encodeABI();
         await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -299,7 +306,7 @@ const StakingContent: React.FC = () => {
     * @returns LP Approve
     */
     const approveLPStaking = async () => {
-        const amount = web3.utils.toWei(stakeLPValue.toString(), 'ether');
+        let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
         const encodedABI = UniswapV2Contract.methods.approve(account, amount).encodeABI();
         await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -319,7 +326,7 @@ const StakingContent: React.FC = () => {
     * @returns LP Stake
     */
     const stakeLP = async () => {
-        const amount = web3.utils.toWei(stakeLPValue.toString(), 'ether');
+        let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
         const encodedABI = LPStakingContract.methods.stake(amount).encodeABI();
         await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
             (err: any) => { // onError
@@ -371,112 +378,120 @@ const StakingContent: React.FC = () => {
     }
 
     return (
-        <div className='farms-content-wrap'>
-            <div className='farms-content'>
-                <div className='card-wrap'>
-                    <div className='card-title'>NFT Staking</div>
-                    <div className='card-content'>
-                        <div className='card-content-row'>
-                            <img src={LudusGenesis001} alt="LudusGenesis001" />
-                            <div className='card-content-row-title'>Ludus Genesis 001</div>
-                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                <div className='input-selection-number'>{ludusGenesis001}</div>
-                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                            </div>
-                        </div>
-                        <div className='card-content-row'>
-                            <img src={LudusGenesis002} alt="LudusGenesis002" />
-                            <div className='card-content-row-title'>Ludus Genesis 002</div>
-                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                <div className='input-selection-number'>{ludusGenesis002}</div>
-                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                            </div>
-                        </div>
-                        <div className='card-content-row'>
-                            <img src={LudusGenesis003} alt="LudusGenesis003" />
-                            <div className='card-content-row-title'>Ludus Genesis 003</div>
-                            <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                                <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                <div className='input-selection-number'>{ludusGenesis003}</div>
-                                <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='card-content-btm'>
-                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
-                        <CustomButton className={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || nftStakingDisabled ? 'b-btn main' : `button`} disabled={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || (nftStakingDisabled)} onClick={stakeNFT}>Stake</CustomButton>
-                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimNFT}>Claim</CustomButton>
-                        <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeNFT}>Unstake</CustomButton>
-                    </div>
-                </div>
-                <div className='card-wrap-column'>
+        <>
+            {openUnstakeModal &&
+                <>
+                    <div className='backdrop-unstake'></div>
+                    <UnstakeModal onClose={() => setOpenUnstakeModal(false)} onStake001={() => unstakeNFT(1)} onStake002={() => unstakeNFT(2)} onStake003={() => unstakeNFT(3)}/>
+                </>
+            }
+            <div className='farms-content-wrap'>
+                <div className='farms-content'>
                     <div className='card-wrap'>
-                        <div className='card-title'>Single asset staking</div>
-                        <div className='card-content-holder'>
-                            <div className='card-content-balance'>
-                                <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                    Your Ludus Balance
-                                    <div className='card-content-number'>
-                                        {ludusBalance}
-                                    </div>
+                        <div className='card-title'>NFT Staking</div>
+                        <div className='card-content'>
+                            <div className='card-content-row'>
+                                <img src={LudusGenesis001} alt="LudusGenesis001" />
+                                <div className='card-content-row-title'>Ludus Genesis 001</div>
+                                <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                    <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                    <div className='input-selection-number'>{ludusGenesis001}</div>
+                                    <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
                             </div>
-                            <div className='card-content-input'>
+                            <div className='card-content-row'>
+                                <img src={LudusGenesis002} alt="LudusGenesis002" />
+                                <div className='card-content-row-title'>Ludus Genesis 002</div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                                    <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeSingleAssetValue <= 0 || !account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                    <input type="number" disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
-                                    <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                                    <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                    <div className='input-selection-number'>{ludusGenesis002}</div>
+                                    <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
-                                <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeSingleAssetValue(ludusBalance)}>MAX</CustomButton>
+                            </div>
+                            <div className='card-content-row'>
+                                <img src={LudusGenesis003} alt="LudusGenesis003" />
+                                <div className='card-content-row-title'>Ludus Genesis 003</div>
+                                <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                    <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                    <div className='input-selection-number'>{ludusGenesis003}</div>
+                                    <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                                </div>
                             </div>
                         </div>
                         <div className='card-content-btm'>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
-                            <CustomButton className={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled)} onClick={stakeSingleAsset}>Stake</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimSingleAsset}>Claim</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeSingleAsset}>Unstake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveNFTStaking}>Approve</CustomButton>
+                            <CustomButton className={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || nftStakingDisabled ? 'b-btn main' : `button`} disabled={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) || (nftStakingDisabled)} onClick={stakeNFT}>Stake</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimNFT}>Claim</CustomButton>
+                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={() => setOpenUnstakeModal(true)}>Unstake</CustomButton>
                         </div>
                     </div>
-                    <div className='card-wrap'>
-                        <div className='card-title'>LP Staking</div>
-                        <div className='card-content'>
+                    <div className='card-wrap-column'>
+                        <div className='card-wrap'>
+                            <div className='card-title'>Single asset staking</div>
                             <div className='card-content-holder'>
                                 <div className='card-content-balance'>
                                     <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                        Your LP Balance
+                                        Your Ludus Balance
                                     <div className='card-content-number'>
-                                            {lpBalance}
-                                        </div>
-                                    </div>
-                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                        Staked
-                                    <div className='card-content-number'>
-                                            {lpStakingBalance}
+                                            {ludusBalance}
                                         </div>
                                     </div>
                                 </div>
                                 <div className='card-content-input'>
                                     <div className={`input-selection ${!account ? 'disabled' : ''}`}>
-                                        <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeLPValue <= 0 || !account) ? null : setStakeLPValue(stakeLPValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
-                                        <input type="number" disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />
-                                        <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeLPValue(stakeLPValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                                        <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeSingleAssetValue <= 0 || !account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                        <input type="number" disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
+                                        <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeSingleAssetValue(stakeSingleAssetValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                     </div>
-                                    <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeLPValue(lpBalance)}>MAX</CustomButton>
+                                    <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeSingleAssetValue(ludusBalance)}>MAX</CustomButton>
                                 </div>
                             </div>
+                            <div className='card-content-btm'>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveSingleAsset}>Approve</CustomButton>
+                                <CustomButton className={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeSingleAssetValue <= 0 || singleAssetStakingDisabled)} onClick={stakeSingleAsset}>Stake</CustomButton>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimSingleAsset}>Claim</CustomButton>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeSingleAsset}>Unstake</CustomButton>
+                            </div>
                         </div>
-                        <div className='card-content-btm'>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
-                            <CustomButton className={(!account || stakeLPValue <= 0 || lpStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeLPValue <= 0 || lpStakingDisabled)} onClick={stakeLP}>Stake</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimLP}>Claim</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeLP}>Unstake</CustomButton>
+                        <div className='card-wrap'>
+                            <div className='card-title'>LP Staking</div>
+                            <div className='card-content'>
+                                <div className='card-content-holder'>
+                                    <div className='card-content-balance'>
+                                        <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                            Your LP Balance
+                                    <div className='card-content-number'>
+                                                {lpBalance}
+                                            </div>
+                                        </div>
+                                        <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                            Staked
+                                    <div className='card-content-number'>
+                                                {lpStakingBalance}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='card-content-input'>
+                                        <div className={`input-selection ${!account ? 'disabled' : ''}`}>
+                                            <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (stakeLPValue <= 0 || !account) ? null : setStakeLPValue(stakeLPValue - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
+                                            <input type="number" disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />
+                                            <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setStakeLPValue(stakeLPValue + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
+                                        </div>
+                                        <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeLPValue(lpBalance)}>MAX</CustomButton>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='card-content-btm'>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={approveLPStaking}>Approve</CustomButton>
+                                <CustomButton className={(!account || stakeLPValue <= 0 || lpStakingDisabled) ? 'b-btn main' : `button`} disabled={(!account || stakeLPValue <= 0 || lpStakingDisabled)} onClick={stakeLP}>Stake</CustomButton>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={claimLP}>Claim</CustomButton>
+                                <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={unstakeLP}>Unstake</CustomButton>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

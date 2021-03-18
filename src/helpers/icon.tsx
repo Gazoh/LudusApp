@@ -12,5 +12,6 @@ export const icons = {
     discord: fab.faDiscord,
     github: fab.faGithub,
     minus: fas.faMinus,
-    plus: fas.faPlus
+    plus: fas.faPlus,
+    close: fas.faTimes
 }
