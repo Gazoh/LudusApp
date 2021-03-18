@@ -376,6 +376,7 @@ footer {
   justify-content: center;
   align-items: center;
   position: absolute;
+  top: 0;
 }
 
 .unstake-wrap {
@@ -417,7 +418,8 @@ footer {
   height: 100%;
   z-index: 9;
   min-width: 100%;
-  position: absolute;
+  position: fixed;
+  top: 0;
 }
 
 .unstake-card {
@@ -516,5 +518,8 @@ footer {
   }
   .card-content-text:first-child {
     margin-right: auto;
+  }
+  .unstake-wrap {
+    flex-direction: column;
   }
 }
