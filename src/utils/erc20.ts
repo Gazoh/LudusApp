@@ -37,12 +37,21 @@ export const getAllowance = async (
   }
 }
 
-export const getAllowanceLP = async (contract: Contract, contractAddress: string, account: string): Promise<string> => {
+export const getAllowanceCheck = async (contract: Contract, contractAddress: string, account: string): Promise<string> => {
   try {
     const allowance: string = await contract.methods.allowance(account, contractAddress).call()
     return allowance
   } catch (e) {
     return '0'
+  }
+}
+
+export const getAllowanceNFT = async (contract: Contract, contractAddress: string, account: string): Promise<boolean> => {
+  try {
+    const allowance: boolean = await contract.methods.isApprovedForAll(account, contractAddress).call()
+    return allowance
+  } catch (e) {
+    return false
   }
 }
 

@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
-import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'
 import { provider } from 'web3-core'
 import { Contract } from 'web3-eth-contract'
+import { getAllowanceNFT } from '../utils/erc20'
 
-import { getAllowanceCheck } from '../utils/erc20'
-
-const useAllowance = (contract: Contract, contractAddress: string) => {
-    const [allowance, setAllowance] = useState(new BigNumber(0))
+const useAllowanceNFT = (contract: Contract, contractAddress: string) => {
+    const [allowance, setAllowance] = useState(false)
     const { account }: { account: string; ethereum: provider } = useWallet()
 
     const fetchAllowance = useCallback(async () => {
-        const allowance = await getAllowanceCheck(contract, contractAddress, account)
-        setAllowance(new BigNumber(allowance))
+        const allowance = await getAllowanceNFT(contract, contractAddress, account)
+        setAllowance(allowance)
     }, [account, contract, contractAddress])
 
     useEffect(() => {
@@ -27,4 +25,4 @@ const useAllowance = (contract: Contract, contractAddress: string) => {
     return allowance
 }
 
-export default useAllowance
+export default useAllowanceNFT
