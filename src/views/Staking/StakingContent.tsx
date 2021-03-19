@@ -25,9 +25,6 @@ import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
 import useAllowanceCheck from '../../hooks/useAllowanceCheck'
 
 const StakingContent: React.FC = () => {
-    // TODO return toast if input is 0 and you want to approve
-    // 0x4d776f260e1Ae873F0841FF93e7E538BD7059B01
-
     const { ethereum }: { ethereum: provider } = useWallet()
     const { account } = useWallet()
     // Main Net
