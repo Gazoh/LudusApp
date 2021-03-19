@@ -9,7 +9,7 @@ import {Contract} from 'web3-eth-contract'
 import {getAllowance} from '../utils/erc20'
 import {getMasterChefContract} from '../vbtc/utils'
 
-const useAllowance = (lpContract: Contract) => {
+const useAllowanceCheck = (lpContract: Contract) => {
   const [allowance, setAllowance] = useState(new BigNumber(0))
   const {account}: {account: string; ethereum: provider} = useWallet()
   const vbtc = useVBTC()
@@ -35,4 +35,4 @@ const useAllowance = (lpContract: Contract) => {
   return allowance
 }
 
-export default useAllowance
+export default useAllowanceCheck

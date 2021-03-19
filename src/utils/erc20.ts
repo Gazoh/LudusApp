@@ -37,6 +37,15 @@ export const getAllowance = async (
   }
 }
 
+export const getAllowanceLP = async (contract: Contract, contractAddress: string, account: string): Promise<string> => {
+  try {
+    const allowance: string = await contract.methods.allowance(account, contractAddress).call()
+    return allowance
+  } catch (e) {
+    return '0'
+  }
+}
+
 export const getBalance = async (
   provider: provider,
   tokenAddress: string,

@@ -291,7 +291,7 @@ input::-webkit-inner-spin-button {
   font-size: 18px;
   letter-spacing: 0px;
   color: #25252C;
-  margin-right: 24px;
+  margin-right: 16px;
 }
 
 .disabled {
@@ -359,7 +359,7 @@ footer {
 
 .card-content-balance {
   display: flex;
-  width: 50%
+  width: 75%
 }
 
 .standAlone {
@@ -520,6 +520,11 @@ footer {
     margin-right: auto;
   }
   .unstake-wrap {
+    width: 100%;
+    margin: 0 24px;
     flex-direction: column;
+  }
+  .unstake-card {
+    margin: 8px 24px;
   }
 }
