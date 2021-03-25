@@ -14,6 +14,7 @@ import LPStakingABI from '../../assets/abi/LPStakingABI.json';
 import LudusABI from '../../assets/abi/LudusABI.json';
 import LudusStakingABI from '../../assets/abi/LudusStakingABI.json';
 import UniswapV2ABI from '../../assets/abi/UniswapV2ABI.json';
+import WETHABI from '../../assets/abi/WETHABI.json';
 
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
@@ -24,6 +25,7 @@ import BigNumber from 'bignumber.js'
 import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
 import useAllowanceCheck from '../../hooks/useAllowanceCheck'
 import useAllowanceNFT from '../../hooks/useAllowanceNFT'
+import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
 
 const StakingContent: React.FC = () => {
     // TODO return toast if input is 0 and you want to approve
@@ -38,6 +40,7 @@ const StakingContent: React.FC = () => {
     const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
     const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
     const UniswapV2ContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
+    const WETHContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
 
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [ethereum])
     const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [ethereum])
@@ -45,6 +48,7 @@ const StakingContent: React.FC = () => {
     const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [ethereum])
     const RaribleContract = useMemo(() => { return getContractOf(RaribleABI, ethereum as provider, RaribleTokenContractAddress) }, [ethereum])
     const UniswapV2Contract = useMemo(() => { return getContractOf(UniswapV2ABI, ethereum as provider, UniswapV2ContractAddress) }, [ethereum])
+    const WETHContract = useMemo(() => { return getContractOf(WETHABI, ethereum as provider, WETHContractAddress) }, [ethereum])
 
     const ludusGenesis001ID = 181087
     const ludusGenesis002ID = 181123
@@ -62,7 +66,9 @@ const StakingContent: React.FC = () => {
     const [lpBalance, setLPBalance] = useState('0')
 
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
+    const [openDisclaimerModal, setOpenDisclaimerModal] = useState(false)
 
+    const [totalLPWethValue, setTotalLPWethValue] = useState({})
     // const allowanceLP = useAllowanceCheck(UniswapV2Contract, UniswapV2ContractAddress)
     // const allowanceSingleAsset = useAllowanceCheck(LudusContract, LudusContractAddress)
     // const allowanceNFT = useAllowanceNFT(RaribleContract, RaribleTokenContractAddress)
@@ -76,7 +82,74 @@ const StakingContent: React.FC = () => {
     BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_FLOOR });
 
     useEffect(() => {
-        // setting Ludus & LP Balance
+        getBalances();
+        disclaimerState();
+        
+        const hasSeenDisclaimer = localStorage.getItem('disclaimer-seen');
+        if(hasSeenDisclaimer === null) {
+            setOpenDisclaimerModal(true)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, stakeLPValue, stakeSingleAssetValue])
+
+    const disclaimerState = () => {
+
+    }
+
+    const calcNFTApy = () => {
+
+    }
+
+    const calcApy = () => {
+        if (account !== null) {
+            // Get balance of the token address
+            const tokenAmountWholeLP = LudusContract.methods.balanceOf(UniswapV2ContractAddress).call()
+            const tokenDecimals = LudusContract.methods.decimals().call()
+
+            // Convert that into the portion of total lpContract = p1
+            const totalSupply = UniswapV2Contract.methods.totalSupply().call()
+
+            // Get the share of lpContract that masterChefContract owns
+            const balance = UniswapV2Contract.methods.balanceOf(LPStakingContractAddress).call()
+
+            // Get WETH balance of lpContract
+            const WETHLPBalance = WETHContract.methods.balanceOf(UniswapV2ContractAddress).call()
+
+            tokenAmountWholeLP.then((TAW: any) => {
+                tokenDecimals.then((TD: any) => {
+                    totalSupply.then((TS: any) => {
+                        balance.then((B: any) => {
+                            WETHLPBalance.then((WETHB: any) => {
+
+                                // Return p1 * w1 * 2
+                                const portionLp = new BigNumber(B).div(new BigNumber(TS))
+                                const tokenAmount = new BigNumber(TAW).times(portionLp).div(new BigNumber(10).pow(TD))
+
+                                let wethAmount = new BigNumber(WETHB).times(portionLp).div(new BigNumber(10).pow(18))
+                                let lpWethWorth = new BigNumber(WETHB)
+
+                                const totalLpWethValue = portionLp.times(lpWethWorth).times(new BigNumber(2))
+                                setTotalLPWethValue({
+                                    tokenAmount,
+                                    wethAmount,
+                                    totalWethValue: totalLpWethValue.div(new BigNumber(10).pow(18)),
+                                    tokenPriceInWeth: wethAmount.div(tokenAmount),
+                                    // poolWeight: await getPoolWeight(masterChefContract, pid),
+                                    // multiplier: await getMultiplier(masterChefContract, block, vbtc)
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
+    }
+
+    /* 
+    * @returns Balances of Ludus, LP and LP Staking
+    */
+    const getBalances = () => {
         if (account !== null) {
             // Ludus Balance
             const balLudus = LudusContract.methods.balanceOf(account).call();
@@ -103,8 +176,7 @@ const StakingContent: React.FC = () => {
             })
 
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, stakeLPValue, stakeSingleAssetValue])
+    }
 
 
     /* 
@@ -418,6 +490,15 @@ const StakingContent: React.FC = () => {
                     <div className='backdrop-unstake'></div>
                     <UnstakeModal onClose={() => setOpenUnstakeModal(false)} onStake001={() => unstakeNFT(1)} onStake002={() => unstakeNFT(2)} onStake003={() => unstakeNFT(3)} />
                 </>
+            }
+            {openDisclaimerModal &&
+                <div className='disclaimer-container'>
+                    <div className='backdrop-unstake'></div>
+                    <DisclaimerModal onClose={() => {
+                        setOpenDisclaimerModal(false);
+                        localStorage.setItem('disclaimer-seen', 'true')
+                    }}/>
+                </div>
             }
             <div className='farms-content-wrap'>
                 <div className='farms-content'>

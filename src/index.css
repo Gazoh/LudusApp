@@ -369,7 +369,7 @@ footer {
   margin-left: 16px;
 }
 
-.unstake-modal {
+.unstake-modal{
   width: 100%;
   display: flex;
   height: 100%;
@@ -379,7 +379,8 @@ footer {
   top: 0;
 }
 
-.unstake-wrap {
+.unstake-wrap,
+.disclaimer-modal {
   background: #FFFFFF 0% 0% no-repeat padding-box;
   box-shadow: 0px 10px 18px #00000014;
   border-radius: 13px;
@@ -391,6 +392,42 @@ footer {
   align-items: center;
   z-index: 99;
   position: relative;
+}
+.disclaimer-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+}
+.disclaimer-modal {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.disclaimer-title {
+  text-align: left;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0px;
+  color: #25252C;
+  opacity: 1;
+  margin-bottom: 24px;
+}
+
+.disclaimer-btm {
+  margin-top: 24px;
+}
+
+.disclaimer-content {
+    text-align: left;
+    font-size: 18px;
+    letter-spacing: 0px;
+    color: #25252C;
+    margin-right: 16px;
 }
 
 .i-btn:focus {
