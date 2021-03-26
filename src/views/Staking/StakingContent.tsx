@@ -233,24 +233,21 @@ const StakingContent: React.FC = () => {
             const G001StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis001ID).call();
             G001StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
-                let bn = new BigNumber(a).toPrecision(1);
-                setNFTG001StakingBalance(bn)
+                setNFTG001StakingBalance(a)
             })
 
             // NFT G002 Staking Balance
             const G002StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis002ID).call();
             G002StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
-                let bn = new BigNumber(a).toPrecision(1);
-                setNFTG002StakingBalance(bn)
+                setNFTG002StakingBalance(a)
             })
 
             // NFT G003 Staking Balance
             const G003StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis003ID).call();
             G003StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
-                let bn = new BigNumber(a).toPrecision(1);
-                setNFTG003StakingBalance(bn)
+                setNFTG003StakingBalance(a)
             })
         }
     }
