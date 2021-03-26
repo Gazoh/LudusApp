@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../../helpers/icon'
 import { useWallet } from 'use-wallet'
@@ -6,6 +6,7 @@ import { provider } from 'web3-core'
 import { getContractOf } from '../../utils/erc20'
 import { sendTransaction } from '../../utils/utils'
 import { toast, ToastOptions } from 'react-toastify';
+import { Contract } from 'web3-eth-contract'
 
 import Web3 from 'web3'
 import NFTStakingABI from '../../assets/abi/NFTStakingABI.json';
@@ -14,7 +15,6 @@ import LPStakingABI from '../../assets/abi/LPStakingABI.json';
 import LudusABI from '../../assets/abi/LudusABI.json';
 import LudusStakingABI from '../../assets/abi/LudusStakingABI.json';
 import UniswapV2ABI from '../../assets/abi/UniswapV2ABI.json';
-import WETHABI from '../../assets/abi/WETHABI.json';
 
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
@@ -28,11 +28,21 @@ import useAllowanceNFT from '../../hooks/useAllowanceNFT'
 import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
 
 const StakingContent: React.FC = () => {
-    // TODO return toast if input is 0 and you want to approve
-    // 0x4d776f260e1Ae873F0841FF93e7E538BD7059B01
+    // Big Number CONFIG
+    BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_FLOOR });
 
+    // WEB 3
     const { ethereum }: { ethereum: provider } = useWallet()
     const { account } = useWallet()
+
+    // Allowance check (not working yet)
+    // @TODO FIX
+
+    // const allowanceLP = useAllowanceCheck(UniswapV2Contract, UniswapV2ContractAddress)
+    // const allowanceSingleAsset = useAllowanceCheck(LudusContract, LudusContractAddress)
+    // const allowanceNFT = useAllowanceNFT(RaribleContract, RaribleTokenContractAddress)
+
+
     // Main Net
     const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
     const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
@@ -40,107 +50,123 @@ const StakingContent: React.FC = () => {
     const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
     const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
     const UniswapV2ContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
-    const WETHContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
 
+    // Contracts
     const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [ethereum])
     const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [ethereum])
     const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContractAddress) }, [ethereum])
     const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [ethereum])
     const RaribleContract = useMemo(() => { return getContractOf(RaribleABI, ethereum as provider, RaribleTokenContractAddress) }, [ethereum])
     const UniswapV2Contract = useMemo(() => { return getContractOf(UniswapV2ABI, ethereum as provider, UniswapV2ContractAddress) }, [ethereum])
-    const WETHContract = useMemo(() => { return getContractOf(WETHABI, ethereum as provider, WETHContractAddress) }, [ethereum])
 
+    // Genesis ID'S
     const ludusGenesis001ID = 181087
     const ludusGenesis002ID = 181123
     const ludusGenesis003ID = 181077
 
+    // Genesis Values
     const [ludusGenesis001, setLudusGenesis001] = useState(0)
     const [ludusGenesis002, setLudusGenesis002] = useState(0)
     const [ludusGenesis003, setLudusGenesis003] = useState(0)
 
+    // LP & Single Asset values
     const [stakeSingleAssetValue, setStakeSingleAssetValue] = useState('0')
     const [stakeLPValue, setStakeLPValue] = useState('0')
 
+    // Current account balance
     const [ludusBalance, setLudusBalance]: any = useState('0')
     const [lpStakingBalance, setLPStakingBalance] = useState('0')
     const [lpBalance, setLPBalance] = useState('0')
 
+    // Modal States
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
     const [openDisclaimerModal, setOpenDisclaimerModal] = useState(false)
 
-    const [totalLPWethValue, setTotalLPWethValue] = useState({})
-    // const allowanceLP = useAllowanceCheck(UniswapV2Contract, UniswapV2ContractAddress)
-    // const allowanceSingleAsset = useAllowanceCheck(LudusContract, LudusContractAddress)
-    // const allowanceNFT = useAllowanceNFT(RaribleContract, RaribleTokenContractAddress)
+    // APY Values for NFT
+    const [G001APY, setG001APY] = useState('0')
+    const [G002APY, setG002APY] = useState('0')
+    const [G003APY, setG003APY] = useState('0')
+
+    // APY Values for LP & Single asset
+    const [LPAPY, setLPAPY] = useState('0')
+    const [singleAssetAPY, setSingleAssetAPY] = useState('0')
 
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
     const web3 = new Web3(ethereum);
-
-    // Big Number CONFIG
-    BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_FLOOR });
+    let interval: NodeJS.Timeout;
 
     useEffect(() => {
         getBalances();
         disclaimerState();
-        
-        const hasSeenDisclaimer = localStorage.getItem('disclaimer-seen');
-        if(hasSeenDisclaimer === null) {
-            setOpenDisclaimerModal(true)
-        }
+        handleAPYCalls();
 
+        // Setting the first calls for the apy calc, after these are set the interval starts counting till 10s and updates the variables. 
+        calcNFTApy(1, (val: any) => setG003APY(val));
+        calcNFTApy(4, (val: any) => setG002APY(val));
+        calcNFTApy(400, (val: any) => setG001APY(val));
+        calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
+        calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+
+        // unmount action
+        return () => clearTimeout(interval)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, stakeLPValue, stakeSingleAssetValue])
 
+    /* 
+   * @returns All the APY's in a callback
+   */
+    const handleAPYCalls = () => {
+        interval = setInterval(() => {
+            calcNFTApy(1, (val: any) => setG003APY(val));
+            calcNFTApy(4, (val: any) => setG002APY(val));
+            calcNFTApy(400, (val: any) => setG001APY(val));
+            calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
+            calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+            console.log('hi')
+        }, 10000)
+    }
+
+    /* 
+    * @returns if disclaimer can be showed or not.
+    */
     const disclaimerState = () => {
-
+        const hasSeenDisclaimer = localStorage.getItem('disclaimer-seen');
+        if (hasSeenDisclaimer === null) {
+            setOpenDisclaimerModal(true)
+        }
     }
 
-    const calcNFTApy = () => {
-
-    }
-
-    const calcApy = () => {
+    /* 
+    * @returns APY for whatever contract you want to use.
+    */
+    const calcAPY = (contract: Contract, set: Function) => {
         if (account !== null) {
-            // Get balance of the token address
-            const tokenAmountWholeLP = LudusContract.methods.balanceOf(UniswapV2ContractAddress).call()
-            const tokenDecimals = LudusContract.methods.decimals().call()
+            const rewardRate = contract.methods.rewardRate().call();
+            const totalValue = contract.methods.totalValue().call();
+            rewardRate.then((RT: any) => {
+                totalValue.then((TV: any) => {
+                    const calc = ((31556926 * RT) / TV);
+                    const APY = new BigNumber(calc);
+                    set(parseFloat(APY.toPrecision(6)))
+                })
+            })
+        }
+    }
 
-            // Convert that into the portion of total lpContract = p1
-            const totalSupply = UniswapV2Contract.methods.totalSupply().call()
-
-            // Get the share of lpContract that masterChefContract owns
-            const balance = UniswapV2Contract.methods.balanceOf(LPStakingContractAddress).call()
-
-            // Get WETH balance of lpContract
-            const WETHLPBalance = WETHContract.methods.balanceOf(UniswapV2ContractAddress).call()
-
-            tokenAmountWholeLP.then((TAW: any) => {
-                tokenDecimals.then((TD: any) => {
-                    totalSupply.then((TS: any) => {
-                        balance.then((B: any) => {
-                            WETHLPBalance.then((WETHB: any) => {
-
-                                // Return p1 * w1 * 2
-                                const portionLp = new BigNumber(B).div(new BigNumber(TS))
-                                const tokenAmount = new BigNumber(TAW).times(portionLp).div(new BigNumber(10).pow(TD))
-
-                                let wethAmount = new BigNumber(WETHB).times(portionLp).div(new BigNumber(10).pow(18))
-                                let lpWethWorth = new BigNumber(WETHB)
-
-                                const totalLpWethValue = portionLp.times(lpWethWorth).times(new BigNumber(2))
-                                setTotalLPWethValue({
-                                    tokenAmount,
-                                    wethAmount,
-                                    totalWethValue: totalLpWethValue.div(new BigNumber(10).pow(18)),
-                                    tokenPriceInWeth: wethAmount.div(tokenAmount),
-                                    // poolWeight: await getPoolWeight(masterChefContract, pid),
-                                    // multiplier: await getMultiplier(masterChefContract, block, vbtc)
-                                })
-                            })
-                        })
-                    })
+    /* 
+    * @returns NFT APY
+    */
+    const calcNFTApy = (multiplier: number, set: Function) => {
+        if (account !== null) {
+            const rewardRate = NFTStakingContract.methods.rewardRate().call();
+            const totalValueStacked = NFTStakingContract.methods.totalValueStacked().call();
+            rewardRate.then((RT: any) => {
+                totalValueStacked.then((TVS: any) => {
+                    const calc = ((RT * multiplier) / TVS)
+                    const APY = new BigNumber(calc).times(31556926).dividedBy(1e18);
+                    set(parseFloat(APY.toPrecision(9)))
                 })
             })
         }
@@ -497,7 +523,7 @@ const StakingContent: React.FC = () => {
                     <DisclaimerModal onClose={() => {
                         setOpenDisclaimerModal(false);
                         localStorage.setItem('disclaimer-seen', 'true')
-                    }}/>
+                    }} />
                 </div>
             }
             <div className='farms-content-wrap'>
@@ -507,7 +533,10 @@ const StakingContent: React.FC = () => {
                         <div className='card-content'>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis001} alt="LudusGenesis001" />
-                                <div className='card-content-row-title'>Ludus Genesis 001</div>
+                                <div className='card-content-row-title'>
+                                    Ludus Genesis 001
+                                    <span>APY {G001APY}%</span>
+                                </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
                                     <div className='input-selection-number'>{ludusGenesis001}</div>
@@ -516,7 +545,10 @@ const StakingContent: React.FC = () => {
                             </div>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis002} alt="LudusGenesis002" />
-                                <div className='card-content-row-title'>Ludus Genesis 002</div>
+                                <div className='card-content-row-title'>
+                                    Ludus Genesis 002
+                                    <span>APY {G002APY}%</span>
+                                </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
                                     <div className='input-selection-number'>{ludusGenesis002}</div>
@@ -525,7 +557,10 @@ const StakingContent: React.FC = () => {
                             </div>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis003} alt="LudusGenesis003" />
-                                <div className='card-content-row-title'>Ludus Genesis 003</div>
+                                <div className='card-content-row-title'>
+                                    Ludus Genesis 003
+                                    <span>APY {G003APY}%</span>
+                                </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
                                     <div className='input-selection-number'>{ludusGenesis003}</div>
@@ -546,8 +581,11 @@ const StakingContent: React.FC = () => {
                             <div className='card-content-holder'>
                                 <div className='card-content-balance'>
                                     <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                        Your Ludus Balance
-                                    <div className='card-content-number'>
+                                        <div className='apy-title'>
+                                            <span>APY {singleAssetAPY}%</span>
+                                            Your Ludus Balance
+                                        </div>
+                                        <div className='card-content-number'>
                                             {ludusBalance}
                                         </div>
                                     </div>
@@ -574,8 +612,11 @@ const StakingContent: React.FC = () => {
                                 <div className='card-content-holder'>
                                     <div className='card-content-balance'>
                                         <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
-                                            Your LP Balance
-                                    <div className='card-content-number'>
+                                            <div className='apy-title'>
+                                                <span>APY {LPAPY}%</span>
+                                                Your LP Balance
+                                            </div>
+                                            <div className='card-content-number'>
                                                 {lpBalance}
                                             </div>
                                         </div>
