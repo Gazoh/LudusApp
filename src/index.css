@@ -226,6 +226,9 @@ input::-webkit-inner-spin-button {
   flex-direction: row;
   align-items: center;
 }
+.card-content-row .apy-title {
+  flex-direction: row;
+}
 
 .card-content-row img,
 .unstake-card img {
@@ -234,13 +237,20 @@ input::-webkit-inner-spin-button {
 
 .card-content-row-title {
   text-align: left;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0px;
   color: #25252C;
-  opacity: 0.48;
-  margin-left: 24px;
+  margin-left: 8px;
+}
+
+.card-content-name {
+  margin-right: 24px;
+}
+
+.card-content-name {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .card-content-row-title span{
@@ -332,6 +342,18 @@ input::-webkit-inner-spin-button {
   letter-spacing: 0px;
   color: #0E7DFF;
   opacity: 1;
+}
+
+.card-content-number.apy {
+  font-size: 18px;
+  line-height: 2.5;
+  color: #25252C;
+  opacity: 0.48;
+  font-weight: 300;
+}
+
+.card-content-number.apy.mobile {
+  display: none;
 }
 
 .input-selection-icon.left {
@@ -517,6 +539,10 @@ footer {
     width: 100%;
     padding: 16px;
   }
+
+  .card-content-btm {
+    margin-top: 48px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -590,5 +616,20 @@ footer {
   }
   .unstake-card {
     margin: 8px 24px;
+  }
+
+  .apy-title,
+  .apy-title span,
+  .card-content-text {
+    font-size: 16px;
+  }
+  .card-content-text.apy {
+    display: none;
+  }
+
+  .card-content-number.apy.mobile {
+    display: flex;
+    line-height: 1;
+    margin-left: 16px;
   }
 }

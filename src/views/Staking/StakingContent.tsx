@@ -75,8 +75,12 @@ const StakingContent: React.FC = () => {
 
     // Current account balance
     const [ludusBalance, setLudusBalance]: any = useState('0')
+    const [ludusStakingBalance, setLudusStakingBalance]: any = useState('0')
     const [lpStakingBalance, setLPStakingBalance] = useState('0')
     const [lpBalance, setLPBalance] = useState('0')
+    const [NFTG001StakingBalance, setNFTG001StakingBalance] = useState('0')
+    const [NFTG002StakingBalance, setNFTG002StakingBalance] = useState('0')
+    const [NFTG003StakingBalance, setNFTG003StakingBalance] = useState('0')
 
     // Modal States
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
@@ -100,14 +104,8 @@ const StakingContent: React.FC = () => {
     useEffect(() => {
         getBalances();
         disclaimerState();
-        handleAPYCalls();
-
-        // Setting the first calls for the apy calc, after these are set the interval starts counting till 10s and updates the variables. 
-        calcNFTApy(1, (val: any) => setG003APY(val));
-        calcNFTApy(4, (val: any) => setG002APY(val));
-        calcNFTApy(400, (val: any) => setG001APY(val));
-        calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
-        calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+        handleAPYCalls(10000);
+        setBalances(10000);
 
         // unmount action
         return () => clearTimeout(interval)
@@ -117,15 +115,23 @@ const StakingContent: React.FC = () => {
     /* 
    * @returns All the APY's in a callback
    */
-    const handleAPYCalls = () => {
-        interval = setInterval(() => {
+    const handleAPYCalls = (intervalNumber: number) => {
+        if (G001APY === '0' || G002APY === '0' || G003APY === '0' || LPAPY === '0' || singleAssetAPY === '0') {
             calcNFTApy(1, (val: any) => setG003APY(val));
             calcNFTApy(4, (val: any) => setG002APY(val));
             calcNFTApy(400, (val: any) => setG001APY(val));
             calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
             calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
-            console.log('hi')
-        }, 10000)
+        } else {
+            interval = setInterval(() => {
+                calcNFTApy(1, (val: any) => setG003APY(val));
+                calcNFTApy(4, (val: any) => setG002APY(val));
+                calcNFTApy(400, (val: any) => setG001APY(val));
+                calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
+                calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+                console.log('hi')
+            }, intervalNumber)
+        }
     }
 
     /* 
@@ -173,20 +179,42 @@ const StakingContent: React.FC = () => {
     }
 
     /* 
-    * @returns Balances of Ludus, LP and LP Staking
+    * @returns Setting the Balances of Ludus, LP and LP Staking
+    */
+    const setBalances = (intervalNumber: number) => {
+        if (account !== null) {
+            if (ludusBalance === '0' || ludusStakingBalance === '0' || lpStakingBalance === '0' || lpBalance === '0') {
+                getBalances();
+            } else {
+                interval = setInterval(() => getBalances(), intervalNumber)
+            }
+        }
+    }
+
+    /* 
+    * @returns Getting the balances of Ludus, LP and LP Staking
     */
     const getBalances = () => {
+        let addr = account
         if (account !== null) {
             // Ludus Balance
-            const balLudus = LudusContract.methods.balanceOf(account).call();
+            const balLudus = LudusContract.methods.balanceOf(addr).call();
             balLudus.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
                 setLudusBalance(bn)
             })
 
+            // Ludus Staking Balance
+            const balLudusStaking = LudusStakingContract.methods.balanceOf(addr).call();
+            balLudusStaking.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'ether');
+                let bn = new BigNumber(a).toPrecision(3);
+                setLudusStakingBalance(bn)
+            })
+
             // LP Staking Balance
-            const balLPStaking = LPStakingContract.methods.balanceOf(account).call();
+            const balLPStaking = LPStakingContract.methods.balanceOf(addr).call();
             balLPStaking.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
@@ -194,13 +222,36 @@ const StakingContent: React.FC = () => {
             })
 
             // LP Balance
-            const balLP = UniswapV2Contract.methods.balanceOf(account).call();
+            const balLP = UniswapV2Contract.methods.balanceOf(addr).call();
             balLP.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
                 setLPBalance(bn)
             })
 
+            // NFT G001 Staking Balance
+            const G001StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis001ID).call();
+            G001StakingBal.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'wei');
+                let bn = new BigNumber(a).toPrecision(1);
+                setNFTG001StakingBalance(bn)
+            })
+
+            // NFT G002 Staking Balance
+            const G002StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis002ID).call();
+            G002StakingBal.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'wei');
+                let bn = new BigNumber(a).toPrecision(1);
+                setNFTG002StakingBalance(bn)
+            })
+
+            // NFT G003 Staking Balance
+            const G003StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis003ID).call();
+            G003StakingBal.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'wei');
+                let bn = new BigNumber(a).toPrecision(1);
+                setNFTG003StakingBalance(bn)
+            })
         }
     }
 
@@ -531,11 +582,24 @@ const StakingContent: React.FC = () => {
                     <div className='card-wrap'>
                         <div className='card-title'>NFT Staking</div>
                         <div className='card-content'>
+                            <div className='card-content-number apy mobile'>
+                                APY {G001APY}%
+                            </div>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis001} alt="LudusGenesis001" />
-                                <div className='card-content-row-title'>
-                                    Ludus Genesis 001
-                                    <span>APY {G001APY}%</span>
+                                <div className={`apy-title card-content-row-title ${!account ? 'disabled' : ''}`}>
+                                    <div className={`card-content-text apy ${!account ? 'disabled' : ''}`}>
+                                        Ludus Genesis 001
+                                        <div className='card-content-number apy'>
+                                            APY {G001APY}%
+                                        </div>
+                                    </div>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Staked
+                                        <div className='card-content-number'>
+                                            {NFTG001StakingBalance}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis001 === 0 || !account) ? null : setLudusGenesis001(ludusGenesis001 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
@@ -543,11 +607,24 @@ const StakingContent: React.FC = () => {
                                     <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis001(ludusGenesis001 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
                             </div>
+                            <div className='card-content-number apy mobile'>
+                                APY {G002APY}%
+                            </div>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis002} alt="LudusGenesis002" />
-                                <div className='card-content-row-title'>
-                                    Ludus Genesis 002
-                                    <span>APY {G002APY}%</span>
+                                <div className={`apy-title card-content-row-title ${!account ? 'disabled' : ''}`}>
+                                    <div className={`card-content-text apy ${!account ? 'disabled' : ''}`}>
+                                        Ludus Genesis 002
+                                        <div className='card-content-number apy'>
+                                            APY {G002APY}%
+                                        </div>
+                                    </div>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Staked
+                                        <div className='card-content-number'>
+                                            {NFTG002StakingBalance}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis002 === 0 || !account) ? null : setLudusGenesis002(ludusGenesis002 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
@@ -555,11 +632,24 @@ const StakingContent: React.FC = () => {
                                     <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis002(ludusGenesis002 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
                             </div>
+                            <div className='card-content-number apy mobile'>
+                                APY {G003APY}%
+                            </div>
                             <div className='card-content-row'>
                                 <img src={LudusGenesis003} alt="LudusGenesis003" />
-                                <div className='card-content-row-title'>
-                                    Ludus Genesis 003
-                                    <span>APY {G003APY}%</span>
+                                <div className={`apy-title card-content-row-title ${!account ? 'disabled' : ''}`}>
+                                    <div className={`card-content-text apy ${!account ? 'disabled' : ''}`}>
+                                        Ludus Genesis 003
+                                        <div className='card-content-number apy'>
+                                            APY {G003APY}%
+                                        </div>
+                                    </div>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Staked
+                                        <div className='card-content-number'>
+                                            {NFTG003StakingBalance}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className={`input-selection ${!account ? 'disabled' : ''}`}>
                                     <CustomButton className='nbdr-btn input-selection-icon left' onClick={() => (ludusGenesis003 === 0 || !account) ? null : setLudusGenesis003(ludusGenesis003 - 1)}><FontAwesomeIcon icon={icons.minus} /></CustomButton>
@@ -587,6 +677,12 @@ const StakingContent: React.FC = () => {
                                         </div>
                                         <div className='card-content-number'>
                                             {ludusBalance}
+                                        </div>
+                                    </div>
+                                    <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
+                                        Staked
+                                        <div className='card-content-number'>
+                                            {lpStakingBalance}
                                         </div>
                                     </div>
                                 </div>
@@ -622,8 +718,8 @@ const StakingContent: React.FC = () => {
                                         </div>
                                         <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
                                             Staked
-                                    <div className='card-content-number'>
-                                                {lpStakingBalance}
+                                            <div className='card-content-number'>
+                                                {ludusStakingBalance}
                                             </div>
                                         </div>
                                     </div>
