@@ -3,18 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../../helpers/icon'
 import { useWallet } from 'use-wallet'
 import { provider } from 'web3-core'
-import { getContractOf } from '../../utils/erc20'
 import { sendTransaction } from '../../utils/utils'
 import { toast, ToastOptions } from 'react-toastify';
 import { Contract } from 'web3-eth-contract'
 
 import Web3 from 'web3'
-import NFTStakingABI from '../../assets/abi/NFTStakingABI.json';
-import RaribleABI from '../../assets/abi/RaribleABI.json';
-import LPStakingABI from '../../assets/abi/LPStakingABI.json';
-import LudusABI from '../../assets/abi/LudusABI.json';
-import LudusStakingABI from '../../assets/abi/LudusStakingABI.json';
-import UniswapV2ABI from '../../assets/abi/UniswapV2ABI.json';
 
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
@@ -24,6 +17,7 @@ import CustomButton from '../../components/CustomButton/CustomButton'
 import BigNumber from 'bignumber.js'
 import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
 import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
+import ContractHelper from '../../helpers/ContractHelper';
 
 const StakingContent: React.FC = () => {
     // Big Number CONFIG
@@ -36,26 +30,9 @@ const StakingContent: React.FC = () => {
     // Allowance check (not working yet)
     // @TODO FIX
 
-    // const allowanceLP = useAllowanceCheck(UniswapV2Contract, UniswapV2ContractAddress)
-    // const allowanceSingleAsset = useAllowanceCheck(LudusContract, LudusContractAddress)
-    // const allowanceNFT = useAllowanceNFT(RaribleContract, RaribleTokenContractAddress)
-
-
-    // Main Net
-    const LudusStakingContractAddress = '0x055c2E794c6e1308B7a1B4c7b80aAf5Ed757c2F6'
-    const LudusContractAddress = '0x03fDcAdc09559262F40F5EA61C720278264eB1da'
-    const LPStakingContractAddress = '0x9494b87a5bc8D7Be31f88821E5081Dc5aB029EB2'
-    const NFTStakingContractAddress = '0x420Ccf524D8b6Ad1144Ea48df212559a836A5261'
-    const RaribleTokenContractAddress = '0xd07dc4262BCDbf85190C01c996b4C06a461d2430'
-    const UniswapV2ContractAddress = '0x9eaa644489a728f7923da985df1dbecf9a2ebe17'
-
-    // Contracts
-    const LudusStakingContract = useMemo(() => { return getContractOf(LudusStakingABI, ethereum as provider, LudusStakingContractAddress) }, [ethereum])
-    const LudusContract = useMemo(() => { return getContractOf(LudusABI, ethereum as provider, LudusContractAddress) }, [ethereum])
-    const LPStakingContract = useMemo(() => { return getContractOf(LPStakingABI, ethereum as provider, LPStakingContractAddress) }, [ethereum])
-    const NFTStakingContract = useMemo(() => { return getContractOf(NFTStakingABI, ethereum as provider, NFTStakingContractAddress) }, [ethereum])
-    const RaribleContract = useMemo(() => { return getContractOf(RaribleABI, ethereum as provider, RaribleTokenContractAddress) }, [ethereum])
-    const UniswapV2Contract = useMemo(() => { return getContractOf(UniswapV2ABI, ethereum as provider, UniswapV2ContractAddress) }, [ethereum])
+    // const allowanceLP = useAllowanceCheck(contractHelper.UniswapV2.Contract, contractHelper.UniswapV2.ContractAddress)
+    // const allowanceSingleAsset = useAllowanceCheck(contractHelper.Ludus.Contract, contractHelper.Ludus.Address)
+    // const allowanceNFT = useAllowanceNFT(contractHelper.Rarible.Contract, contractHelper.Rarible.Address)
 
     // Genesis ID'S
     const ludusGenesis001ID = 181087
@@ -102,6 +79,8 @@ const StakingContent: React.FC = () => {
 
     let interval: NodeJS.Timeout;
 
+    let contractHelper: any = ContractHelper();
+
     useEffect(() => {
         disclaimerState();
         handleAPYCalls(10000);
@@ -123,15 +102,15 @@ const StakingContent: React.FC = () => {
             calcNFTApy(1, (val: any) => setG003APY(val));
             calcNFTApy(4, (val: any) => setG002APY(val));
             calcNFTApy(400, (val: any) => setG001APY(val));
-            calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
-            calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+            calcAPY(contractHelper.LPStaking.Contract, (val: any) => setLPAPY(val))
+            calcAPY(contractHelper.LudusStaking.Contract, (val: any) => setSingleAssetAPY(val))
         } else {
             interval = setInterval(() => {
                 calcNFTApy(1, (val: any) => setG003APY(val));
                 calcNFTApy(4, (val: any) => setG002APY(val));
                 calcNFTApy(400, (val: any) => setG001APY(val));
-                calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
-                calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
+                calcAPY(contractHelper.LPStaking.Contract, (val: any) => setLPAPY(val))
+                calcAPY(contractHelper.LudusStaking.Contract, (val: any) => setSingleAssetAPY(val))
             }, intervalNumber)
         }
     }
@@ -139,7 +118,7 @@ const StakingContent: React.FC = () => {
     const isFarmingBusy = useCallback(() => {
         if (account !== null) {
             // Ludus Balance
-            const pr = NFTStakingContract.methods.farmingStarted().call();
+            const pr = contractHelper.NFTStaking.Contract.methods.farmingStarted().call();
             pr.then((fs: boolean) => {
                 setFarmingStarted(fs);
             })
@@ -151,7 +130,7 @@ const StakingContent: React.FC = () => {
         let test = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
         if (account !== null) {
             // Ludus Balance
-            const pr = NFTStakingContract.methods.pendingReward(test).call();
+            const pr = contractHelper.NFTStaking.Contract.methods.pendingReward(test).call();
             pr.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(6);
@@ -168,7 +147,7 @@ const StakingContent: React.FC = () => {
         let addr = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
         if (account !== null) {
             // Ludus Balance
-            const balLudus = LudusContract.methods.balanceOf(addr).call();
+            const balLudus = contractHelper.Ludus.Contract.methods.balanceOf(addr).call();
             balLudus.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
@@ -176,7 +155,7 @@ const StakingContent: React.FC = () => {
             })
             
             // Ludus Staking Balance
-            const balLudusStaking = LudusStakingContract.methods.balanceOf(addr).call();
+            const balLudusStaking = contractHelper.LudusStaking.Contract.methods.balanceOf(addr).call();
             balLudusStaking.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(6);
@@ -185,7 +164,7 @@ const StakingContent: React.FC = () => {
             })
 
             // LP Staking Balance
-            const balLPStaking = LPStakingContract.methods.balanceOf(addr).call();
+            const balLPStaking = contractHelper.LPStaking.Contract.methods.balanceOf(addr).call();
             balLPStaking.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
@@ -193,7 +172,7 @@ const StakingContent: React.FC = () => {
             })
 
             // LP Balance
-            const balLP = UniswapV2Contract.methods.balanceOf(addr).call();
+            const balLP = contractHelper.UniswapV2.Contract.methods.balanceOf(addr).call();
             balLP.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(3);
@@ -201,21 +180,21 @@ const StakingContent: React.FC = () => {
             })
 
             // NFT G001 Staking Balance
-            const G001StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis001ID).call();
+            const G001StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis001ID).call();
             G001StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
                 setNFTG001StakingBalance(a)
             })
 
             // NFT G002 Staking Balance
-            const G002StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis002ID).call();
+            const G002StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis002ID).call();
             G002StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
                 setNFTG002StakingBalance(a)
             })
 
             // NFT G003 Staking Balance
-            const G003StakingBal = NFTStakingContract.methods.balanceOf(addr, ludusGenesis003ID).call();
+            const G003StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis003ID).call();
             G003StakingBal.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'wei');
                 setNFTG003StakingBalance(a)
@@ -256,8 +235,8 @@ const StakingContent: React.FC = () => {
     */
     const calcNFTApy = useCallback((multiplier: number, set: Function) => {
         if (account !== null) {
-            const rewardRate = NFTStakingContract.methods.rewardRate().call();
-            const totalValueStacked = NFTStakingContract.methods.totalValueStacked().call();
+            const rewardRate = contractHelper.NFTStaking.Contract.methods.rewardRate().call();
+            const totalValueStacked = contractHelper.NFTStaking.Contract.methods.totalValueStacked().call();
             rewardRate.then((RT: any) => {
                 totalValueStacked.then((TVS: any) => {
                     const calc = ((RT * multiplier) / TVS)
@@ -291,8 +270,8 @@ const StakingContent: React.FC = () => {
         if (ludusGenesis001 === 0 && ludusGenesis002 === 0 && ludusGenesis003 === 0) {
             return toast("Can't approve amount of 0", toastOptionsError)
         }
-        const encodedABI = RaribleContract.methods.setApprovalForAll(NFTStakingContractAddress, true).encodeABI();
-        await sendTransaction(ethereum, account, RaribleTokenContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.Rarible.Contract.methods.setApprovalForAll(contractHelper.NFTStaking.Address, true).encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.Rarible.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled approve for NFT', toastOptionsError)
@@ -310,8 +289,8 @@ const StakingContent: React.FC = () => {
     */
     const stakeNFT = () => {
         if (ludusGenesis001 > 0) {
-            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis001ID, ludusGenesis001).encodeABI();
-            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+            const encodedABI = contractHelper.NFTStaking.Contract.methods.stake(ludusGenesis001ID, ludusGenesis001).encodeABI();
+            sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled stake for NFT', toastOptionsError)
@@ -324,8 +303,8 @@ const StakingContent: React.FC = () => {
                 });
         }
         if (ludusGenesis002 > 0) {
-            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis002ID, ludusGenesis002).encodeABI();
-            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+            const encodedABI = contractHelper.NFTStaking.Contract.methods.stake(ludusGenesis002ID, ludusGenesis002).encodeABI();
+            sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled stake for NFT', toastOptionsError)
@@ -338,8 +317,8 @@ const StakingContent: React.FC = () => {
                 });
         }
         if (ludusGenesis003 > 0) {
-            const encodedABI = NFTStakingContract.methods.stake(ludusGenesis003ID, ludusGenesis003).encodeABI();
-            sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+            const encodedABI = contractHelper.NFTStaking.Contract.methods.stake(ludusGenesis003ID, ludusGenesis003).encodeABI();
+            sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled stake', toastOptionsError)
@@ -357,8 +336,8 @@ const StakingContent: React.FC = () => {
     * @returns Claims NFT
     */
     const claimNFT = async () => {
-        const encodedABI = NFTStakingContract.methods.claim().encodeABI();
-        await sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.NFTStaking.Contract.methods.claim().encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled claim for NFT', toastOptionsError)
@@ -376,8 +355,8 @@ const StakingContent: React.FC = () => {
     */
     const unstakeNFT = async (id: number) => {
         if (id === 1) {
-            const encodedABI1 = NFTStakingContract.methods.exit(ludusGenesis001ID).encodeABI();
-            await sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI1, '0x0',
+            const encodedABI1 = contractHelper.NFTStaking.Contract.methods.exit(ludusGenesis001ID).encodeABI();
+            await sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI1, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled unstaking for NFT', toastOptionsError)
@@ -390,8 +369,8 @@ const StakingContent: React.FC = () => {
                 });
         }
         if (id === 2) {
-            const encodedABI2 = NFTStakingContract.methods.exit(ludusGenesis002ID).encodeABI();
-            await sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI2, '0x0',
+            const encodedABI2 = contractHelper.NFTStaking.Contract.methods.exit(ludusGenesis002ID).encodeABI();
+            await sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI2, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled unstaking for NFT', toastOptionsError)
@@ -404,8 +383,8 @@ const StakingContent: React.FC = () => {
                 });
         }
         if (id === 3) {
-            const encodedABI3 = NFTStakingContract.methods.exit(ludusGenesis003ID).encodeABI();
-            await sendTransaction(ethereum, account, NFTStakingContractAddress, encodedABI3, '0x0',
+            const encodedABI3 = contractHelper.NFTStaking.Contract.methods.exit(ludusGenesis003ID).encodeABI();
+            await sendTransaction(ethereum, account, contractHelper.NFTStaking.Address, encodedABI3, '0x0',
                 (err: any) => { // onError
                     if (err.code === 4001) {
                         toast('Cancelled unstaking for NFT', toastOptionsError)
@@ -424,8 +403,8 @@ const StakingContent: React.FC = () => {
     */
     const approveSingleAsset = async () => {
         const amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
-        const encodedABI = LudusContract.methods.approve(LudusStakingContractAddress, amount).encodeABI();
-        await sendTransaction(ethereum, account, LudusContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.Ludus.Contract.methods.approve(contractHelper.Ludus.Address, amount).encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled approving for single asset', toastOptionsError)
@@ -443,8 +422,8 @@ const StakingContent: React.FC = () => {
     */
     const stakeSingleAsset = async () => {
         const amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
-        const encodedABI = LudusStakingContract.methods.stake(amount).encodeABI();
-        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LudusStaking.Contract.methods.stake(amount).encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled staking for single asset', toastOptionsError)
@@ -461,8 +440,8 @@ const StakingContent: React.FC = () => {
     * @returns Claims Single asset
     */
     const claimSingleAsset = async () => {
-        const encodedABI = LudusStakingContract.methods.claim().encodeABI();
-        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LudusStaking.Contract.methods.claim().encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled claim for single asset', toastOptionsError)
@@ -479,8 +458,8 @@ const StakingContent: React.FC = () => {
     * @returns Unstakes the Single asset
     */
     const unstakeSingleAsset = async () => {
-        const encodedABI = LudusStakingContract.methods.exit().encodeABI();
-        await sendTransaction(ethereum, account, LudusStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LudusStaking.Contract.methods.exit().encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled unstake for single asset', toastOptionsError)
@@ -498,7 +477,7 @@ const StakingContent: React.FC = () => {
     */
     const approveLPStaking = () => {
         let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
-        UniswapV2Contract.methods.approve(LPStakingContractAddress, amount).send({ from: account })
+        contractHelper.UniswapV2.Contract.methods.approve(contractHelper.LPStaking.Address, amount).send({ from: account })
             .on('transactionHash',
                 () => {
                     toast('Approve succeeded for LP', toastOptionsSuccess)
@@ -518,8 +497,8 @@ const StakingContent: React.FC = () => {
     */
     const stakeLP = async () => {
         let amount = new BigNumber(stakeLPValue).times(1e18).toString(10);
-        const encodedABI = LPStakingContract.methods.stake(amount).encodeABI();
-        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LPStaking.Contract.methods.stake(amount).encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.LPStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled staking for LP', toastOptionsError)
@@ -536,8 +515,8 @@ const StakingContent: React.FC = () => {
     * @returns LP Claim
     */
     const claimLP = async () => {
-        const encodedABI = LPStakingContract.methods.claim().encodeABI();
-        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LPStaking.Contract.methods.claim().encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.LPStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled claim for LP', toastOptionsError)
@@ -554,8 +533,8 @@ const StakingContent: React.FC = () => {
     * @returns LP Unstake
     */
     const unstakeLP = async () => {
-        const encodedABI = LPStakingContract.methods.exit().encodeABI();
-        await sendTransaction(ethereum, account, LPStakingContractAddress, encodedABI, '0x0',
+        const encodedABI = contractHelper.LPStaking.Contract.methods.exit().encodeABI();
+        await sendTransaction(ethereum, account, contractHelper.LPStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled unstaking for LP', toastOptionsError)
