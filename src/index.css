@@ -516,6 +516,15 @@ footer {
   margin: 0 24px;
 }
 
+.reward {
+  font-size: 18px;
+  line-height: 2.5;
+  color: #25252C;
+  opacity: 0.48;
+  font-weight: 300;
+  margin-left: 16px;
+}
+
 @media only screen and (max-width: 1024px) {
   .farms-content {
     flex-direction: column;

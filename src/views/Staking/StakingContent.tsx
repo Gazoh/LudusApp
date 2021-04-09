@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../../helpers/icon'
 import { useWallet } from 'use-wallet'
@@ -81,6 +81,8 @@ const StakingContent: React.FC = () => {
     const [NFTG001StakingBalance, setNFTG001StakingBalance] = useState('0')
     const [NFTG002StakingBalance, setNFTG002StakingBalance] = useState('0')
     const [NFTG003StakingBalance, setNFTG003StakingBalance] = useState('0')
+    const [NFTRewards, setNFTRewards] = useState('0')
+    const [farmingStarted, setFarmingStarted] = useState(true)
 
     // Modal States
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
@@ -91,6 +93,8 @@ const StakingContent: React.FC = () => {
     const [G002APY, setG002APY] = useState('0')
     const [G003APY, setG003APY] = useState('0')
 
+    const web3 = new Web3(ethereum);
+
     // APY Values for LP & Single asset
     const [LPAPY, setLPAPY] = useState('0')
     const [singleAssetAPY, setSingleAssetAPY] = useState('0')
@@ -98,14 +102,15 @@ const StakingContent: React.FC = () => {
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
-    const web3 = new Web3(ethereum);
     let interval: NodeJS.Timeout;
 
     useEffect(() => {
-        getBalances();
         disclaimerState();
         handleAPYCalls(10000);
         setBalances(10000);
+        getBalances();
+        getPendingRewards();
+        isFarmingBusy();
 
         // unmount action
         return () => clearTimeout(interval)
@@ -129,72 +134,39 @@ const StakingContent: React.FC = () => {
                 calcNFTApy(400, (val: any) => setG001APY(val));
                 calcAPY(LPStakingContract, (val: any) => setLPAPY(val))
                 calcAPY(LudusStakingContract, (val: any) => setSingleAssetAPY(val))
-                console.log('hi')
             }, intervalNumber)
         }
     }
 
-    /* 
-    * @returns if disclaimer can be showed or not.
-    */
-    const disclaimerState = () => {
-        const hasSeenDisclaimer = localStorage.getItem('disclaimer-seen');
-        if (hasSeenDisclaimer === null) {
-            setOpenDisclaimerModal(true)
-        }
-    }
-
-    /* 
-    * @returns APY for whatever contract you want to use.
-    */
-    const calcAPY = (contract: Contract, set: Function) => {
+    const isFarmingBusy = useCallback(() => {
         if (account !== null) {
-            const rewardRate = contract.methods.rewardRate().call();
-            const totalValue = contract.methods.totalValue().call();
-            rewardRate.then((RT: any) => {
-                totalValue.then((TV: any) => {
-                    const calc = ((31556926 * RT) / TV);
-                    const APY = new BigNumber(calc);
-                    set(parseFloat(APY.toPrecision(6)))
-                })
+            // Ludus Balance
+            const pr = NFTStakingContract.methods.farmingStarted().call();
+            pr.then((fs: boolean) => {
+                setFarmingStarted(fs);
             })
         }
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account])
 
-    /* 
-    * @returns NFT APY
-    */
-    const calcNFTApy = (multiplier: number, set: Function) => {
+    const getPendingRewards = useCallback(() => {
+        let test = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
         if (account !== null) {
-            const rewardRate = NFTStakingContract.methods.rewardRate().call();
-            const totalValueStacked = NFTStakingContract.methods.totalValueStacked().call();
-            rewardRate.then((RT: any) => {
-                totalValueStacked.then((TVS: any) => {
-                    const calc = ((RT * multiplier) / TVS)
-                    const APY = new BigNumber(calc).times(31556926).dividedBy(1e18);
-                    set(parseFloat(APY.toPrecision(9)))
-                })
+            // Ludus Balance
+            const pr = NFTStakingContract.methods.pendingReward(test).call();
+            pr.then((b: any) => {
+                let a = web3.utils.fromWei(b, 'ether');
+                let bn = new BigNumber(a).toPrecision(6);
+                setNFTRewards(bn)
             })
         }
-    }
-
-    /* 
-    * @returns Setting the Balances of Ludus, LP and LP Staking
-    */
-    const setBalances = (intervalNumber: number) => {
-        if (account !== null) {
-            if (ludusBalance === '0' || ludusStakingBalance === '0' || lpStakingBalance === '0' || lpBalance === '0') {
-                getBalances();
-            } else {
-                interval = setInterval(() => getBalances(), intervalNumber)
-            }
-        }
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account])
 
     /* 
     * @returns Getting the balances of Ludus, LP and LP Staking
     */
-    const getBalances = () => {
+    const getBalances = useCallback(() => {
         let addr = account
         if (account !== null) {
             // Ludus Balance
@@ -249,6 +221,66 @@ const StakingContent: React.FC = () => {
                 let a = web3.utils.fromWei(b, 'wei');
                 setNFTG003StakingBalance(a)
             })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account]);
+
+    /* 
+    * @returns if disclaimer can be showed or not.
+    */
+    const disclaimerState = () => {
+        const hasSeenDisclaimer = localStorage.getItem('disclaimer-seen');
+        if (hasSeenDisclaimer === null) {
+            setOpenDisclaimerModal(true)
+        }
+    }
+
+    /* 
+    * @returns APY for whatever contract you want to use.
+    */
+    const calcAPY = useCallback((contract: Contract, set: Function) => {
+        if (account !== null) {
+            const rewardRate = contract.methods.rewardRate().call();
+            const totalValue = contract.methods.totalValue().call();
+            rewardRate.then((RT: any) => {
+                totalValue.then((TV: any) => {
+                    const calc = ((31556926 * RT) / TV);
+                    const APY = new BigNumber(calc);
+                    set(parseFloat(APY.toPrecision(6)))
+                })
+            })
+        }
+    }, [account])
+
+    /* 
+    * @returns NFT APY
+    */
+    const calcNFTApy = useCallback((multiplier: number, set: Function) => {
+        if (account !== null) {
+            const rewardRate = NFTStakingContract.methods.rewardRate().call();
+            const totalValueStacked = NFTStakingContract.methods.totalValueStacked().call();
+            rewardRate.then((RT: any) => {
+                totalValueStacked.then((TVS: any) => {
+                    const calc = ((RT * multiplier) / TVS)
+                    const APY = new BigNumber(calc).times(31556926).dividedBy(1e18);
+                    set(parseFloat(APY.toPrecision(9)))
+                })
+            })
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account])
+
+    /* 
+    * @returns Setting the Balances of Ludus, LP and LP Staking
+    */
+    const setBalances = (intervalNumber: number) => {
+        if (account !== null) {
+            if (ludusBalance === '0' || ludusStakingBalance === '0' || lpStakingBalance === '0' || lpBalance === '0') {
+                getBalances();
+            } else {
+                interval = setInterval(() => getBalances(), intervalNumber)
+            }
         }
     }
 
@@ -654,12 +686,13 @@ const StakingContent: React.FC = () => {
                                     <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => (!account) ? null : setLudusGenesis003(ludusGenesis003 + 1)}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                 </div>
                             </div>
+                            <p className={`reward ${!account ? 'disabled' : ''}`}>Pending Rewards: {NFTRewards}</p>
                         </div>
                         <div className='card-content-btm'>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={() => approveNFTStaking()}>Approve</CustomButton>
-                            <CustomButton className={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) ? 'b-btn main' : `button`} disabled={(!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0)} onClick={() => stakeNFT()}>Stake</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={() => claimNFT()}>Claim</CustomButton>
-                            <CustomButton className={!account ? 'b-btn main' : `button`} disabled={!account} onClick={() => setOpenUnstakeModal(true)}>Unstake</CustomButton>
+                            <CustomButton className={(!farmingStarted || !account) ? 'b-btn main' : `button`} disabled={(!farmingStarted || !account)} onClick={() => approveNFTStaking()}>Approve</CustomButton>
+                            <CustomButton className={(!farmingStarted) || (!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0) ? 'b-btn main' : `button`} disabled={(!farmingStarted) || (!account || ludusGenesis001 <= 0) && (ludusGenesis002 <= 0) && (ludusGenesis003 <= 0)} onClick={() => stakeNFT()}>Stake</CustomButton>
+                            <CustomButton className={(!farmingStarted || !account) ? 'b-btn main' : `button`} disabled={(!farmingStarted || !account)} onClick={() => claimNFT()}>Claim</CustomButton>
+                            <CustomButton className={(!farmingStarted || !account) ? 'b-btn main' : `button`} disabled={(!farmingStarted || !account)} onClick={() => setOpenUnstakeModal(true)}>Unstake</CustomButton>
                         </div>
                     </div>
                     <div className='card-wrap-column'>
@@ -679,7 +712,7 @@ const StakingContent: React.FC = () => {
                                     <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
                                         Staked
                                         <div className='card-content-number'>
-                                            {lpStakingBalance}
+                                            {ludusStakingBalance}
                                         </div>
                                     </div>
                                 </div>
@@ -716,7 +749,7 @@ const StakingContent: React.FC = () => {
                                         <div className={`card-content-text ${!account ? 'disabled' : ''}`}>
                                             Staked
                                             <div className='card-content-number'>
-                                                {ludusStakingBalance}
+                                                {lpStakingBalance}
                                             </div>
                                         </div>
                                     </div>
