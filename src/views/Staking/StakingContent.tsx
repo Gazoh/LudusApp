@@ -5,7 +5,6 @@ import { useWallet } from 'use-wallet'
 import { provider } from 'web3-core'
 import { sendTransaction } from '../../utils/utils'
 import { toast, ToastOptions } from 'react-toastify';
-import { Contract } from 'web3-eth-contract'
 
 import Web3 from 'web3'
 
@@ -17,7 +16,10 @@ import CustomButton from '../../components/CustomButton/CustomButton'
 import BigNumber from 'bignumber.js'
 import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
 import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
-import ContractHelper from '../../helpers/ContractHelper';
+import useContract from '../../hooks/useContract'
+import useApyCalculation from '../../hooks/useApy'
+import useBalances from '../../hooks/useBalance'
+import { Balances } from '../../types/Balances'
 
 const StakingContent: React.FC = () => {
     // Big Number CONFIG
@@ -26,6 +28,17 @@ const StakingContent: React.FC = () => {
     // WEB 3
     const { ethereum }: { ethereum: provider } = useWallet()
     const { account } = useWallet()
+    const web3 = new Web3(ethereum);
+
+    // Contracts
+    const contractHelper: any = useContract();
+
+    // APY Calculations
+    const LPAPY: any = useApyCalculation(contractHelper.LPStaking.Contract);
+    const singleAssetAPY: any = useApyCalculation(contractHelper.LudusStaking.Contract);
+    const G003APY: any = useApyCalculation(contractHelper.NFTStaking.Contract, true, 1);
+    const G002APY: any = useApyCalculation(contractHelper.NFTStaking.Contract, true, 4);
+    const G001APY: any = useApyCalculation(contractHelper.NFTStaking.Contract, true, 400);
 
     // Allowance check (not working yet)
     // @TODO FIX
@@ -49,13 +62,14 @@ const StakingContent: React.FC = () => {
     const [stakeLPValue, setStakeLPValue] = useState('0')
 
     // Current account balance
-    const [ludusBalance, setLudusBalance]: any = useState('0')
-    const [ludusStakingBalance, setLudusStakingBalance]: any = useState('0')
-    const [lpStakingBalance, setLPStakingBalance] = useState('0')
-    const [lpBalance, setLPBalance] = useState('0')
-    const [NFTG001StakingBalance, setNFTG001StakingBalance] = useState('0')
-    const [NFTG002StakingBalance, setNFTG002StakingBalance] = useState('0')
-    const [NFTG003StakingBalance, setNFTG003StakingBalance] = useState('0')
+    const ludusBalance = useBalances(Balances.LUDUS);
+    const ludusStakingBalance = useBalances(Balances.LUDUS_STAKING);
+    const lpStakingBalance = useBalances(Balances.LP_STAKING);
+    const lpBalance = useBalances(Balances.LP);
+    const NFTG001StakingBalance = useBalances(Balances.NFT_G001);
+    const NFTG002StakingBalance = useBalances(Balances.NFT_G002);
+    const NFTG003StakingBalance = useBalances(Balances.NFT_G003);
+
     const [NFTRewards, setNFTRewards] = useState('0')
     const [farmingStarted, setFarmingStarted] = useState(true)
 
@@ -63,29 +77,13 @@ const StakingContent: React.FC = () => {
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
     const [openDisclaimerModal, setOpenDisclaimerModal] = useState(false)
 
-    // APY Values for NFT
-    const [G001APY, setG001APY] = useState('0')
-    const [G002APY, setG002APY] = useState('0')
-    const [G003APY, setG003APY] = useState('0')
-
-    const web3 = new Web3(ethereum);
-
-    // APY Values for LP & Single asset
-    const [LPAPY, setLPAPY] = useState('0')
-    const [singleAssetAPY, setSingleAssetAPY] = useState('0')
-
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
     let interval: NodeJS.Timeout;
 
-    let contractHelper: any = ContractHelper();
-
     useEffect(() => {
         disclaimerState();
-        handleAPYCalls(10000);
-        setBalances(10000);
-        getBalances();
         getPendingRewards();
         isFarmingBusy();
 
@@ -93,27 +91,6 @@ const StakingContent: React.FC = () => {
         return () => clearTimeout(interval)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, ludusGenesis001, ludusGenesis002, ludusGenesis003, ludusBalance, lpStakingBalance, ethereum, stakeLPValue, stakeSingleAssetValue])
-
-    /* 
-   * @returns All the APY's in a callback
-   */
-    const handleAPYCalls = (intervalNumber: number) => {
-        if (G001APY === '0' || G002APY === '0' || G003APY === '0' || LPAPY === '0' || singleAssetAPY === '0') {
-            calcNFTApy(1, (val: any) => setG003APY(val));
-            calcNFTApy(4, (val: any) => setG002APY(val));
-            calcNFTApy(400, (val: any) => setG001APY(val));
-            calcAPY(contractHelper.LPStaking.Contract, (val: any) => setLPAPY(val))
-            calcAPY(contractHelper.LudusStaking.Contract, (val: any) => setSingleAssetAPY(val))
-        } else {
-            interval = setInterval(() => {
-                calcNFTApy(1, (val: any) => setG003APY(val));
-                calcNFTApy(4, (val: any) => setG002APY(val));
-                calcNFTApy(400, (val: any) => setG001APY(val));
-                calcAPY(contractHelper.LPStaking.Contract, (val: any) => setLPAPY(val))
-                calcAPY(contractHelper.LudusStaking.Contract, (val: any) => setSingleAssetAPY(val))
-            }, intervalNumber)
-        }
-    }
 
     const isFarmingBusy = useCallback(() => {
         if (account !== null) {
@@ -127,10 +104,9 @@ const StakingContent: React.FC = () => {
     }, [account])
 
     const getPendingRewards = useCallback(() => {
-        let test = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
         if (account !== null) {
             // Ludus Balance
-            const pr = contractHelper.NFTStaking.Contract.methods.pendingReward(test).call();
+            const pr = contractHelper.NFTStaking.Contract.methods.pendingReward(account).call();
             pr.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
                 let bn = new BigNumber(a).toPrecision(6);
@@ -141,69 +117,6 @@ const StakingContent: React.FC = () => {
     }, [account])
 
     /* 
-    * @returns Getting the balances of Ludus, LP and LP Staking
-    */
-    const getBalances = useCallback(() => {
-        let addr = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
-        if (account !== null) {
-            // Ludus Balance
-            const balLudus = contractHelper.Ludus.Contract.methods.balanceOf(addr).call();
-            balLudus.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'ether');
-                let bn = new BigNumber(a).toPrecision(3);
-                setLudusBalance(bn)
-            })
-            
-            // Ludus Staking Balance
-            const balLudusStaking = contractHelper.LudusStaking.Contract.methods.balanceOf(addr).call();
-            balLudusStaking.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'ether');
-                let bn = new BigNumber(a).toPrecision(6);
-                console.log('bn', bn)
-                setLudusStakingBalance(bn)
-            })
-
-            // LP Staking Balance
-            const balLPStaking = contractHelper.LPStaking.Contract.methods.balanceOf(addr).call();
-            balLPStaking.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'ether');
-                let bn = new BigNumber(a).toPrecision(3);
-                setLPStakingBalance(bn)
-            })
-
-            // LP Balance
-            const balLP = contractHelper.UniswapV2.Contract.methods.balanceOf(addr).call();
-            balLP.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'ether');
-                let bn = new BigNumber(a).toPrecision(3);
-                setLPBalance(bn)
-            })
-
-            // NFT G001 Staking Balance
-            const G001StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis001ID).call();
-            G001StakingBal.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'wei');
-                setNFTG001StakingBalance(a)
-            })
-
-            // NFT G002 Staking Balance
-            const G002StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis002ID).call();
-            G002StakingBal.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'wei');
-                setNFTG002StakingBalance(a)
-            })
-
-            // NFT G003 Staking Balance
-            const G003StakingBal = contractHelper.NFTStaking.Contract.methods.balanceOf(addr, ludusGenesis003ID).call();
-            G003StakingBal.then((b: any) => {
-                let a = web3.utils.fromWei(b, 'wei');
-                setNFTG003StakingBalance(a)
-            })
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account]);
-
-    /* 
     * @returns if disclaimer can be showed or not.
     */
     const disclaimerState = () => {
@@ -212,56 +125,6 @@ const StakingContent: React.FC = () => {
             setOpenDisclaimerModal(true)
         }
     }
-
-    /* 
-    * @returns APY for whatever contract you want to use.
-    */
-    const calcAPY = useCallback((contract: Contract, set: Function) => {
-        if (account !== null) {
-            const rewardRate = contract.methods.rewardRate().call();
-            const totalValue = contract.methods.totalValue().call();
-            rewardRate.then((RT: any) => {
-                totalValue.then((TV: any) => {
-                    const calc = ((31556926 * RT) / TV);
-                    const APY = new BigNumber(calc);
-                    set(parseFloat(APY.toPrecision(6)))
-                })
-            })
-        }
-    }, [account])
-
-    /* 
-    * @returns NFT APY
-    */
-    const calcNFTApy = useCallback((multiplier: number, set: Function) => {
-        if (account !== null) {
-            const rewardRate = contractHelper.NFTStaking.Contract.methods.rewardRate().call();
-            const totalValueStacked = contractHelper.NFTStaking.Contract.methods.totalValueStacked().call();
-            rewardRate.then((RT: any) => {
-                totalValueStacked.then((TVS: any) => {
-                    const calc = ((RT * multiplier) / TVS)
-                    const APY = new BigNumber(calc).times(31556926).dividedBy(1e18);
-                    set(parseFloat(APY.toPrecision(9)))
-                })
-            })
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account])
-
-    /* 
-    * @returns Setting the Balances of Ludus, LP and LP Staking
-    */
-    const setBalances = (intervalNumber: number) => {
-        if (account !== null) {
-            if (ludusBalance === '0' || ludusStakingBalance === '0' || lpStakingBalance === '0' || lpBalance === '0') {
-                getBalances();
-            } else {
-                interval = setInterval(() => getBalances(), intervalNumber)
-            }
-        }
-    }
-
 
     /* 
     * @returns Approves NFT Staking

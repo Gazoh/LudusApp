@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
+import { useWallet } from 'use-wallet'
 import { getContractOf } from '../utils/erc20'
-import { useWallet } from 'use-wallet';
 import { provider } from 'web3-core'
 
 import NFTStakingABI from '../assets/abi/NFTStakingABI.json';
@@ -10,7 +10,7 @@ import LudusABI from '../assets/abi/LudusABI.json';
 import LudusStakingABI from '../assets/abi/LudusStakingABI.json';
 import UniswapV2ABI from '../assets/abi/UniswapV2ABI.json';
 
-const ContractHelper = () => {
+const useContract = () => {
     // WEB 3
     const { ethereum }: { ethereum: provider } = useWallet()
 
@@ -62,4 +62,4 @@ const ContractHelper = () => {
     return handleContracts;
 }
 
-export default ContractHelper
+export default useContract
