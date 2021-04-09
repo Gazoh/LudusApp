@@ -5,13 +5,11 @@ import { useWallet } from 'use-wallet'
 import metamaskLogo from '../../assets/img/metamask-fox.svg'
 import walletConnectLogo from '../../assets/img/wallet-connect.svg'
 
-import Button from '../Button'
 import CustomButton from '../CustomButton/CustomButton'
 import Modal, { ModalProps } from '../Modal'
 import ModalActions from '../ModalActions'
 import ModalContent from '../ModalContent'
 import ModalTitle from '../ModalTitle'
-import Spacer from '../Spacer'
 import WalletCard from './components/WalletCard'
 
 const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
@@ -24,11 +22,11 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
   }, [account, onDismiss])
 
   return (
-    <Modal>
+    <Modal className='modal-wrapper'>
       <ModalTitle text="Select a wallet provider." />
       <ModalContent className='wallet-card'>
-        <StyledWalletsWrapper>
-          <StyledWalletCard>
+        <StyledWalletsWrapper className='wallet-wrap'>
+          <StyledWalletCard className='styled-wallet-card'>
             <WalletCard
               style={{ boxShadow: 'none' }}
               icon={<img src={metamaskLogo} style={{ height: 32 }} />}
@@ -36,7 +34,7 @@ const WalletProviderModal: React.FC<ModalProps> = ({ onDismiss }) => {
               title="Metamask"
             />
           </StyledWalletCard>
-          <StyledWalletCard>
+          <StyledWalletCard className='styled-wallet-card'>
             <WalletCard
               style={{ boxShadow: 'none' }}
               icon={<img src={walletConnectLogo} style={{ height: 24 }} />}
@@ -58,14 +56,9 @@ const StyledWalletsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   box-shadow: none;
-  @media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
-    flex-direction: column;
-    flex-wrap: none;
-  }
 `
 
 const StyledWalletCard = styled.div`
-  flex-basis: calc(50% - ${(props) => props.theme.spacing[2]}px);
 `
 
 export default WalletProviderModal

@@ -2,13 +2,14 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
 export interface ModalProps {
-  onDismiss?: () => void
+  onDismiss?: () => void,
+  className?: string
 }
 
-const Modal: React.FC = ({ children }) => {
+const Modal: React.FC<ModalProps> = ({ children, className  }) => {
   return (
     <StyledResponsiveWrapper>
-      <StyledModal>{children}</StyledModal>
+      <StyledModal className={className}>{children}</StyledModal>
     </StyledResponsiveWrapper>
   )
 }
@@ -44,10 +45,6 @@ const StyledModal = styled.div`
   position: relative;
   width: 100%;
   min-height: 0;
-  @media (min-width: ${(props) =>
-      props.theme.breakpoints.mobile}px) and (orientation: landscape) {
-    padding: 0 20px;
-  }
 `
 
 export default Modal

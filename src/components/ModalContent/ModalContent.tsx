@@ -11,11 +11,6 @@ const ModalContent: React.FC<ModalContentProps> = ({ children, className}) => {
 }
 
 export const StyledModalContent = styled.div`
-  padding: ${(props) => props.theme.spacing[4]}px;
-  @media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
-    flex: 1;
-    overflow: auto;
-  }
 `
 
 export default ModalContent

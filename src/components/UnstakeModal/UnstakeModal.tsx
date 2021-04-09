@@ -1,12 +1,12 @@
 import React from 'react'
 import { useWallet } from 'use-wallet'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { icons } from '../../helpers/icon'
 
 import CustomButton from '../CustomButton/CustomButton'
 import LudusGenesis001 from '../../assets/img/ludusGenesis001.png'
 import LudusGenesis002 from '../../assets/img/ludusGenesis002.png'
 import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { icons } from '../../helpers/icon'
 
 interface Props {
     onStake001: Function,

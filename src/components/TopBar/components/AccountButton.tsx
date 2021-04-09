@@ -1,29 +1,23 @@
-import React, { useCallback } from 'react'
-import styled from 'styled-components'
-import { useWallet } from 'use-wallet'
+import React from 'react'
 import useModal from '../../../hooks/useModal'
-import Button from '../../Button'
-import CustomButton from '../../CustomButton/CustomButton'
+import styled from 'styled-components'
 import WalletProviderModal from '../../WalletProviderModal'
-import AccountModal from './AccountModal'
+import CustomButton from '../../CustomButton/CustomButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import copy from 'copy-to-clipboard';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import { toast } from 'react-toastify';
+import { useWallet } from 'use-wallet'
 
 interface AccountButtonProps { }
 
 const AccountButton: React.FC<AccountButtonProps> = (props) => {
+  const { account } = useWallet()
   const [onPresentWalletProviderModal] = useModal(
     <WalletProviderModal />,
     'provider',
   )
-
-  const { account } = useWallet()
-
-  const handleUnlockClick = useCallback(() => {
-    onPresentWalletProviderModal()
-  }, [onPresentWalletProviderModal])
 
   return (
     <StyledAccountButton className='styled-account-btn'>
@@ -47,8 +41,6 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
               }}>Copy address</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          {/* <CustomButton className='b-btn' onClick={onPresentAccountModal}>My Wallet</CustomButton> */}
-          {/* <Button onClick={onPresentAccountModal} size="sm" text="My Wallet" /> */}
         </>
       )}
     </StyledAccountButton>

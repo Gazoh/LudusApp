@@ -25,13 +25,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.farm-container {
-  margin: initial !important;
-  margin-bottom: 48px !important;
-}
-
 a {
   color: rgba(229, 147, 16, 1);
+}
+
+#topbar {
+  height: 63px;
+}
+
+.logo {
+  width: 100%;
+}
+
+.styled-logo-wrapper {
+  max-width: 120px;
+}
+
+.styled-account-btn button,
+.b-btn.dropdown button,
+.styled-account-btn .b-btn {
+  height: 40px !important;
+}
+
+.topbar-container {
+  height: 64px;
+  display: flex;
+  padding: 0px 15%;
 }
 
 .b-btn {
@@ -53,16 +72,16 @@ a {
 }
 
 .i-btn {
-      border: none;
-      background-color: transparent;
-      border-radius: 24px;
-      color: #0E7DFF;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 48px;
-      height: 48px;
-      position: relative;
+  border: none;
+  background-color: transparent;
+  border-radius: 24px;
+  color: #0E7DFF;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  position: relative;
 }
 
 .dropdown-menu.show {
@@ -137,12 +156,11 @@ a {
 }
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 
 .input-selection-number:focus {
   outline: none;
@@ -174,7 +192,7 @@ input::-webkit-inner-spin-button {
 
 .nav-item {
   color: #ffffff;
-  margin-right: 48px;
+  margin-right: 24px;
   cursor: pointer;
   text-decoration: none;
 }
@@ -205,19 +223,18 @@ input::-webkit-inner-spin-button {
   margin-bottom: 40px;
 }
 
-
 .farms-content-wrap {
   display: flex;
   justify-content: center;
-  height: 100%;
-  /* width: 100%; */
+  height: calc(100% - 64px);
+  align-items: center;
 }
 
 .farms-content {
   display: flex;
   justify-content: center;
   height: 100%;
-  /* width: 70%; */
+  max-height: 752px;
 }
 
 .card-content-row {
@@ -226,12 +243,12 @@ input::-webkit-inner-spin-button {
   flex-direction: row;
   align-items: center;
 }
+
 .card-content-row .apy-title {
   flex-direction: row;
 }
 
-.card-content-row img,
-.unstake-card img {
+.card-content-row img, .unstake-card img {
   width: 92px;
 }
 
@@ -253,13 +270,13 @@ input::-webkit-inner-spin-button {
   align-items: center;
 }
 
-.card-content-row-title span{
+.card-content-row-title span {
   margin-top: 8px;
 }
 
 .card-content-balance .card-content-text:first-child {
-    position: relative;
-    bottom: 20px;
+  position: relative;
+  bottom: 20px;
 }
 
 .apy-title {
@@ -418,7 +435,7 @@ footer {
   margin-left: 16px;
 }
 
-.unstake-modal{
+.unstake-modal {
   width: 100%;
   display: flex;
   height: 100%;
@@ -428,8 +445,7 @@ footer {
   top: 0;
 }
 
-.unstake-wrap,
-.disclaimer-modal {
+.unstake-wrap, .disclaimer-modal {
   background: #FFFFFF 0% 0% no-repeat padding-box;
   box-shadow: 0px 10px 18px #00000014;
   border-radius: 13px;
@@ -442,6 +458,7 @@ footer {
   z-index: 99;
   position: relative;
 }
+
 .disclaimer-container {
   width: 100%;
   height: 100%;
@@ -451,6 +468,7 @@ footer {
   position: absolute;
   height: 100%;
 }
+
 .disclaimer-modal {
   width: 50%;
   display: flex;
@@ -472,11 +490,11 @@ footer {
 }
 
 .disclaimer-content {
-    text-align: left;
-    font-size: 18px;
-    letter-spacing: 0px;
-    color: #25252C;
-    margin-right: 16px;
+  text-align: left;
+  font-size: 18px;
+  letter-spacing: 0px;
+  color: #25252C;
+  margin-right: 16px;
 }
 
 .i-btn:focus {
@@ -499,7 +517,7 @@ footer {
 }
 
 .backdrop-unstake {
-  background-color: rgba(14,125,255,0.32);
+  background-color: rgba(14, 125, 255, 0.32);
   width: 100%;
   height: 100%;
   z-index: 9;
@@ -525,9 +543,64 @@ footer {
   margin-left: 16px;
 }
 
-@media only screen and (max-width: 1024px) {
+.modal-wrapper {
+  padding: 24px;
+}
+
+.wallet-card {
+  margin: 32px 0;
+  min-height: 320px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.wallet-wrap {
+  width: 100%;
+}
+
+.styled-wallet-card {
+  width: calc(50% - 32px);
+  padding: 0 16px;
+}
+
+.styled-wallet-card div {
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.styled-wallet-card div div{
+  width: 100%;
+}
+
+.styled-wallet-card button {
+  margin-top: 32px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 1440px) {
+  .topbar-container {
+    padding: 0px 5%;
+  }
+}
+
+@media only screen and (max-width: 1025px) {
+  .topbar-container {
+    padding: 0px 2%;
+  }
+  #root {
+    height: initial;
+  }
+  .farms-content-wrap {
+    height: 100%;
+  }
   .farms-content {
     flex-direction: column;
+    width: 100%;
+    padding: 16px;
+    max-height: initial;
   }
   .card-wrap-column .card-wrap {
     min-width: auto;
@@ -544,13 +617,11 @@ footer {
   .card-wrap-column .card-wrap {
     max-width: none;
   }
-  .farms-content {
-    width: 100%;
-    padding: 16px;
-  }
-
   .card-content-btm {
     margin-top: 48px;
+  }
+  .card-content-btm button {
+    width: calc(25% - 12px);
   }
 }
 
@@ -558,6 +629,10 @@ footer {
   .card-content-btm {
     display: flex;
     justify-content: center;
+  }
+
+  .modal-wrapper {
+    width: initial !important;
   }
 }
 
@@ -568,6 +643,9 @@ footer {
 }
 
 @media only screen and (max-width: 426px) {
+  .topbar-container {
+    padding: 0px 5%;
+  }
   .card-content-btm {
     display: flex;
     flex-direction: column;
@@ -611,8 +689,7 @@ footer {
   .wallet-card div div div div, .modal-actions-btm {
     padding: 24 !important;
   }
-  .card-content-balance,
-  .card-content-input {
+  .card-content-balance, .card-content-input {
     width: 100%;
   }
   .card-content-text:first-child {
@@ -626,16 +703,12 @@ footer {
   .unstake-card {
     margin: 8px 24px;
   }
-
-  .apy-title,
-  .apy-title span,
-  .card-content-text {
+  .apy-title, .apy-title span, .card-content-text {
     font-size: 16px;
   }
   .card-content-text.apy {
     display: none;
   }
-
   .card-content-number.apy.mobile {
     display: flex;
     line-height: 1;

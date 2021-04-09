@@ -3,11 +3,13 @@ import styled, { ThemeContext } from 'styled-components'
 
 interface ContainerProps {
   children?: React.ReactNode,
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg',
+  className?: string
 }
 
-const Container: React.FC<ContainerProps> = ({ children, size = 'md' }) => {
-  const { siteWidth } = useContext<{ siteWidth: number }>(ThemeContext)
+const Container: React.FC<ContainerProps> = ({ children, size = 'md', className }) => {
+  const siteWidth = window.innerWidth
+
   let width: number
   switch (size) {
     case 'sm':
@@ -21,7 +23,7 @@ const Container: React.FC<ContainerProps> = ({ children, size = 'md' }) => {
       width = siteWidth
   }
   return (
-    <StyledContainer width={width}>
+    <StyledContainer className={className} width={width}>
       {children}
     </StyledContainer>
   )
@@ -35,7 +37,6 @@ const StyledContainer = styled.div<StyledContainerProps>`
   box-sizing: border-box;
   margin: 0 auto;
   max-width: ${props => props.width}px;
-  padding: 0 ${props => props.theme.spacing[4]}px;
   width: 100%;
 `
 

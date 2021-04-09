@@ -1,11 +1,9 @@
 import React from 'react'
-import styled from 'styled-components'
-
-import Container from '../Container'
-import Logo from '../Logo'
-
-import AccountButton from './components/AccountButton'
 import Nav from './components/Nav'
+import Logo from '../Logo'
+import styled from 'styled-components'
+import AccountButton from './components/AccountButton'
+import Container from '../Container'
 
 interface TopBarProps {
   onPresentMobileMenu: () => void
@@ -14,9 +12,9 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
   return (
     <StyledTopBar id="topbar">
-      <Container size="lg">
+      <Container size="lg" className='topbar-container'>
         <StyledTopBarInner>
-          <StyledLogoWrapper>
+          <StyledLogoWrapper className='styled-logo-wrapper'>
             <Logo />
           </StyledLogoWrapper>
           <StyledNavWrapper>

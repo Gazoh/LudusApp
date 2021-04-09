@@ -23,8 +23,6 @@ import LudusGenesis003 from '../../assets/img/ludusGenesis003.png'
 import CustomButton from '../../components/CustomButton/CustomButton'
 import BigNumber from 'bignumber.js'
 import UnstakeModal from '../../components/UnstakeModal/UnstakeModal'
-import useAllowanceCheck from '../../hooks/useAllowanceCheck'
-import useAllowanceNFT from '../../hooks/useAllowanceNFT'
 import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
 
 const StakingContent: React.FC = () => {
@@ -167,7 +165,7 @@ const StakingContent: React.FC = () => {
     * @returns Getting the balances of Ludus, LP and LP Staking
     */
     const getBalances = useCallback(() => {
-        let addr = account
+        let addr = '0x4d776f260e1Ae873F0841FF93e7E538BD7059B01'
         if (account !== null) {
             // Ludus Balance
             const balLudus = LudusContract.methods.balanceOf(addr).call();
@@ -176,12 +174,13 @@ const StakingContent: React.FC = () => {
                 let bn = new BigNumber(a).toPrecision(3);
                 setLudusBalance(bn)
             })
-
+            
             // Ludus Staking Balance
             const balLudusStaking = LudusStakingContract.methods.balanceOf(addr).call();
             balLudusStaking.then((b: any) => {
                 let a = web3.utils.fromWei(b, 'ether');
-                let bn = new BigNumber(a).toPrecision(3);
+                let bn = new BigNumber(a).toPrecision(6);
+                console.log('bn', bn)
                 setLudusStakingBalance(bn)
             })
 

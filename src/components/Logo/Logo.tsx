@@ -6,7 +6,7 @@ import logoHeaderDark from '../../assets/img/LudusLogoWhite.svg'
 const Logo: React.FC = () => {
   return (
     <StyledLogo to="/">
-      <img src={logoHeaderDark} height="48" style={{ marginTop: -4 }} />
+        <img className='logo' src={logoHeaderDark} alt='Ludus White'/>
     </StyledLogo>
   )
 }
