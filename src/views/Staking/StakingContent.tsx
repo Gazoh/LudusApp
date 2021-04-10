@@ -70,16 +70,21 @@ const StakingContent: React.FC = () => {
     const NFTG002StakingBalance = useBalances(Balances.NFT_G002);
     const NFTG003StakingBalance = useBalances(Balances.NFT_G003);
 
+    // Rewards
     const [NFTRewards, setNFTRewards] = useState('0')
+
+    // Farming started
     const [farmingStarted, setFarmingStarted] = useState(true)
 
     // Modal States
     const [openUnstakeModal, setOpenUnstakeModal] = useState(false)
     const [openDisclaimerModal, setOpenDisclaimerModal] = useState(false)
 
+    // Toast Options
     let toastOptionsError: ToastOptions = { type: 'error' }
     let toastOptionsSuccess: ToastOptions = { type: 'success' }
 
+    // Interval
     let interval: NodeJS.Timeout;
 
     useEffect(() => {
@@ -266,7 +271,7 @@ const StakingContent: React.FC = () => {
     */
     const approveSingleAsset = async () => {
         const amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
-        const encodedABI = contractHelper.Ludus.Contract.methods.approve(contractHelper.Ludus.Address, amount).encodeABI();
+        const encodedABI = contractHelper.Ludus.Contract.methods.approve(contractHelper.LudusStaking.Address, amount).encodeABI();
         await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
