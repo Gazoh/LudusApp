@@ -5,6 +5,7 @@ import { useWallet } from 'use-wallet'
 import { provider } from 'web3-core'
 import { sendTransaction } from '../../utils/utils'
 import { toast, ToastOptions } from 'react-toastify';
+import { Balances } from '../../types/Balances'
 
 import Web3 from 'web3'
 
@@ -19,7 +20,7 @@ import DisclaimerModal from '../../components/DisclaimerModal/DisclaimerModal'
 import useContract from '../../hooks/useContract'
 import useApyCalculation from '../../hooks/useApy'
 import useBalances from '../../hooks/useBalance'
-import { Balances } from '../../types/Balances'
+import packageJson from '../../../package.json';
 
 const StakingContent: React.FC = () => {
     // Big Number CONFIG
@@ -618,6 +619,7 @@ const StakingContent: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                <div className='version'>{packageJson.version}</div>
             </div>
         </>
     )

@@ -41,9 +41,7 @@ a {
   max-width: 120px;
 }
 
-.styled-account-btn button,
-.b-btn.dropdown button,
-.styled-account-btn .b-btn {
+.styled-account-btn button, .b-btn.dropdown button, .styled-account-btn .b-btn {
   height: 40px !important;
 }
 
@@ -571,7 +569,7 @@ footer {
   align-items: center;
 }
 
-.styled-wallet-card div div{
+.styled-wallet-card div div {
   width: 100%;
 }
 
@@ -580,9 +578,21 @@ footer {
   width: 100%;
 }
 
+.version {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  color: #25252C;
+  opacity: 0.48;
+  font-weight: 300;
+}
+
 @media only screen and (max-width: 1440px) {
   .topbar-container {
     padding: 0px 5%;
+  }
+  .version {
+    display: none;
   }
 }
 
@@ -630,7 +640,6 @@ footer {
     display: flex;
     justify-content: center;
   }
-
   .modal-wrapper {
     width: initial !important;
   }
