@@ -51,7 +51,7 @@ const useBalances = (name: Balances) => {
                 const balLPStaking = contractHelper.LPStaking.Contract.methods.balanceOf(account).call();
                 balLPStaking.then((b: any) => {
                     let a = web3.utils.fromWei(b, 'ether');
-                    let bn = new BigNumber(a).toPrecision(3);
+                    let bn = new BigNumber(a).toPrecision(5);
                     setAmount(bn)
                 })
             }

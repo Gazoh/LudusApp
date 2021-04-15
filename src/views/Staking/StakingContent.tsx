@@ -41,13 +41,6 @@ const StakingContent: React.FC = () => {
     const G002APY: any = useApyCalculation(contractHelper.NFTStaking.Contract, true, 4);
     const G001APY: any = useApyCalculation(contractHelper.NFTStaking.Contract, true, 400);
 
-    // Allowance check (not working yet)
-    // @TODO FIX
-
-    // const allowanceLP = useAllowanceCheck(contractHelper.UniswapV2.Contract, contractHelper.UniswapV2.ContractAddress)
-    // const allowanceSingleAsset = useAllowanceCheck(contractHelper.Ludus.Contract, contractHelper.Ludus.Address)
-    // const allowanceNFT = useAllowanceNFT(contractHelper.Rarible.Contract, contractHelper.Rarible.Address)
-
     // Genesis ID'S
     const ludusGenesis001ID = 181087
     const ludusGenesis002ID = 181123
@@ -569,7 +562,7 @@ const StakingContent: React.FC = () => {
                                         <input type="number" disabled={!account} className='input-selection-number' value={stakeSingleAssetValue} onChange={(ev: any) => setStakeSingleAssetValue(ev.target.value)} />
                                         <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => onPlusClick(stakeSingleAssetValue, ludusBalance, (val: string) => setStakeSingleAssetValue(val))}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                     </div>
-                                    <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeSingleAssetValue(ludusBalance)}>MAX</CustomButton>
+                                    <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeSingleAssetValue(ludusStakingBalance)}>MAX</CustomButton>
                                 </div>
                             </div>
                             <div className='card-content-btm'>
@@ -606,7 +599,7 @@ const StakingContent: React.FC = () => {
                                             <input type="number" disabled={!account} className='input-selection-number' value={stakeLPValue} onChange={(ev: any) => setStakeLPValue(ev.target.value)} />
                                             <CustomButton className='nbdr-btn input-selection-icon right' onClick={() => onPlusClick(stakeLPValue, lpBalance, (val: string) => setStakeLPValue(val))}><FontAwesomeIcon icon={icons.plus} /></CustomButton>
                                         </div>
-                                        <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeLPValue(lpBalance)}>MAX</CustomButton>
+                                        <CustomButton className='b-btn main input-selection-icon standAlone' disabled={!account} onClick={() => setStakeLPValue(lpStakingBalance)}>MAX</CustomButton>
                                     </div>
                                 </div>
                             </div>
