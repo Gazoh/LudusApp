@@ -285,7 +285,7 @@ const StakingContent: React.FC = () => {
     const stakeSingleAsset = async () => {
         const amount = new BigNumber(stakeSingleAssetValue).times(1e18).toString(10);
         const encodedABI = contractHelper.LudusStaking.Contract.methods.stake(amount).encodeABI();
-        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
+        await sendTransaction(ethereum, account, contractHelper.LudusStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled staking for single asset', toastOptionsError)
@@ -303,7 +303,7 @@ const StakingContent: React.FC = () => {
     */
     const claimSingleAsset = async () => {
         const encodedABI = contractHelper.LudusStaking.Contract.methods.claim().encodeABI();
-        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
+        await sendTransaction(ethereum, account, contractHelper.LudusStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled claim for single asset', toastOptionsError)
@@ -321,7 +321,7 @@ const StakingContent: React.FC = () => {
     */
     const unstakeSingleAsset = async () => {
         const encodedABI = contractHelper.LudusStaking.Contract.methods.exit().encodeABI();
-        await sendTransaction(ethereum, account, contractHelper.Ludus.Address, encodedABI, '0x0',
+        await sendTransaction(ethereum, account, contractHelper.LudusStaking.Address, encodedABI, '0x0',
             (err: any) => { // onError
                 if (err.code === 4001) {
                     toast('Cancelled unstake for single asset', toastOptionsError)
